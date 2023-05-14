@@ -2,10 +2,6 @@ package main
 
 // MigrateProductV1 migrates V1 product to the current version.
 func MigrateProductV1(productV1 ProductV1) (product Product, err error) {
-	if len(productV1.Name) > NameMaxLength {
-		err = ErrTooLongName
-		return
-	}
 	product = ProductV2{
 		Name:        productV1.Name,
 		Description: "Undefined",

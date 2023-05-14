@@ -49,7 +49,13 @@ func MarshalProductV1(product ProductV1, bs []byte) (n int) {
 }
 
 func UnmarshalProductV1(bs []byte) (product ProductV1, n int, err error) {
-	product.Name, n, err = ord.UnmarshalString(bs)
+	var maxLength muscom.ValidatorFn[int] = func(length int) (err error) {
+		if length > NameMaxLength {
+			err = ErrTooLongName
+		}
+		return
+	}
+	product.Name, n, err = ord.UnmarshalValidString(maxLength, false, bs)
 	return
 }
 
