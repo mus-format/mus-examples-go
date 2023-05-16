@@ -106,9 +106,9 @@ func SizeProductV2(product ProductV2) (size int) {
 }
 
 // -----------------------------------------------------------------------------
-// MarshalProductVersion performs migration of the product to the specified
+// MigrateAndMarshalProduct performs migration of the product to the specified
 // version and marshals the result.
-func MarshalProductVersion(dt DataType, product Product) (bs []byte) {
+func MigrateAndMarshalProduct(dt DataType, product Product) (bs []byte) {
 	switch dt {
 	case ProductV1Type:
 		productV1 := MigrateToProductV1(product)
@@ -121,9 +121,9 @@ func MarshalProductVersion(dt DataType, product Product) (bs []byte) {
 	return
 }
 
-// UnmarshalProductVersion unmarshals from bs a product of the specified version
-// and migrates the result to the current product version.
-func UnmarshalProductVersion(dt DataType, bs []byte) (product Product,
+// UnmarshalAndMigrateProduct unmarshals from bs a product of the specified
+// version and migrates the result to the current product version.
+func UnmarshalAndMigrateProduct(dt DataType, bs []byte) (product Product,
 	err error) {
 	switch dt {
 	case ProductV1Type:

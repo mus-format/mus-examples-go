@@ -36,7 +36,7 @@ func (h Handler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	dt, err := strconv.ParseUint(r.Header.Get(DataTypeHeaderName), 10, 8)
 	assert.EqualError(err, nil)
 
-	bs := MarshalProductVersion(DataType(dt), product)
+	bs := MigrateAndMarshalProduct(DataType(dt), product)
 
 	w.Write(bs)
 }
@@ -55,7 +55,7 @@ func (h Handler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	dt, err := strconv.ParseUint(r.Header.Get(DataTypeHeaderName), 10, 8)
 	assert.EqualError(err, nil)
 
-	product, err := UnmarshalProductVersion(DataType(dt), bs)
+	product, err := UnmarshalAndMigrateProduct(DataType(dt), bs)
 	if err == ErrTooLongName {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))

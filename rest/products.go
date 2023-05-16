@@ -36,5 +36,5 @@ func (products Products) Get(id uuid.UUID) (product Product, err error) {
 	if err != nil {
 		return
 	}
-	return UnmarshalProductVersion(dt, bs[n:])
+	return UnmarshalAndMigrateProduct(dt, bs[n:])
 }
