@@ -26,42 +26,58 @@ type Handler struct {
 
 // HandleGet performs migration from the current Product version to the old one.
 func (h Handler) HandleGet(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := uuid.Parse(vars["id"])
-	assert.EqualError(err, nil)
-
+	id := parseID(r)
 	product, err := h.products.Get(id)
 	assert.EqualError(err, nil)
 
-	dt, err := strconv.ParseUint(r.Header.Get(DataTypeHeaderName), 10, 8)
+	var (
+		dt = parseDataType(r)
+		bs = MigrateAndMarshalProduct(dt, product)
+	)
+	_, err = w.Write(bs)
 	assert.EqualError(err, nil)
-
-	bs := MigrateAndMarshalProduct(DataType(dt), product)
-
-	w.Write(bs)
 }
 
 // HandlePut performs migration from the old Product version to the current
 // one.
 func (h Handler) HandlePut(w http.ResponseWriter, r *http.Request) {
+	var (
+		id = parseID(r)
+		bs = readRequestBody(r)
+		dt = parseDataType(r)
+	)
+	product, err := UnmarshalAndMigrateProduct(dt, bs)
+	if err != nil {
+		sendBackUnmarshalErr(w, err)
+	}
+	h.products.Add(id, product)
+}
+
+func parseID(r *http.Request) (id uuid.UUID) {
 	vars := mux.Vars(r)
 	id, err := uuid.Parse(vars["id"])
 	assert.EqualError(err, nil)
+	return
+}
 
+func parseDataType(r *http.Request) (dt DataType) {
+	n, err := strconv.ParseUint(r.Header.Get(DataTypeHeaderName), 10, 8)
+	assert.EqualError(err, nil)
+	return DataType(n)
+}
+
+func readRequestBody(r *http.Request) []byte {
 	defer r.Body.Close()
 	bs, err := io.ReadAll(r.Body)
 	assert.EqualError(err, nil)
+	return bs
+}
 
-	dt, err := strconv.ParseUint(r.Header.Get(DataTypeHeaderName), 10, 8)
-	assert.EqualError(err, nil)
-
-	product, err := UnmarshalAndMigrateProduct(DataType(dt), bs)
+func sendBackUnmarshalErr(w http.ResponseWriter, err error) {
 	if err == ErrTooLongName {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 		return
 	}
 	assert.EqualError(err, nil)
-
-	h.products.Add(id, product)
 }
