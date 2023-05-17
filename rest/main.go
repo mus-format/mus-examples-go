@@ -76,8 +76,8 @@ func main() {
 	// occur during deserialization.
 	clientCreatesInvalid(client)
 
-	// An old client tries to create an invalid product. An error occurs when
-	// migrating the old version to the current one.
+	// An old client tries to create an invalid product. An error will occur
+	// during deserialization.
 	oldClientCreatesInvalid(oldClient)
 
 }
