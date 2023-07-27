@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	muscom "github.com/mus-format/mus-common-go"
+	com "github.com/mus-format/common-go"
 	"github.com/mus-format/mus-go"
 	"github.com/mus-format/mus-go/ord"
 	"github.com/ymz-ncnk/assert"
@@ -14,9 +14,9 @@ import (
 // unmarshalling.
 func ValidateSlice() {
 	var (
-		m mus.MarshalerFn[string] = ord.MarshalString // Marshaler for slice
+		m mus.MarshallerFn[string] = ord.MarshalString // Marshaler for slice
 		// elements.
-		u mus.UnmarshalerFn[string] = ord.UnmarshalString // Unmarshaler for slice
+		u mus.UnmarshallerFn[string] = ord.UnmarshalString // Unmarshaler for slice
 		// elements.
 		s  mus.SizerFn[string] = ord.SizeString // Sizer for slice elements.
 		sk mus.SkipperFn       = ord.SkipString // Skipper for slice element.
@@ -33,8 +33,8 @@ func ValidateSlice() {
 
 	// Defines a slice length validator.
 	var (
-		ErrTooLongSlice                         = errors.New("too long slice")
-		maxLength       muscom.ValidatorFn[int] = func(length int) (err error) {
+		ErrTooLongSlice                      = errors.New("too long slice")
+		maxLength       com.ValidatorFn[int] = func(length int) (err error) {
 			if length > 2 {
 				err = ErrTooLongSlice
 			}
@@ -62,7 +62,7 @@ func ValidateSlice() {
 		NewInvalidElemError = func(e string) error {
 			return fmt.Errorf("invalid \"%v\" elem", e)
 		}
-		elemValidator muscom.ValidatorFn[string] = func(str string) (err error) {
+		elemValidator com.ValidatorFn[string] = func(str string) (err error) {
 			if str == "world" {
 				err = NewInvalidElemError(str)
 			}

@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 
-	muscom "github.com/mus-format/mus-common-go"
+	com "github.com/mus-format/common-go"
 	"github.com/mus-format/mus-go/ord"
 )
 
@@ -26,7 +26,6 @@ var (
 
 var ErrTooLongName = errors.New("too long name")
 
-// -----------------------------------------------------------------------------
 // Current product version.
 type Product = ProductV2
 
@@ -50,7 +49,7 @@ func MarshalProductV1(product ProductV1, bs []byte) (n int) {
 }
 
 func UnmarshalProductV1(bs []byte) (product ProductV1, n int, err error) {
-	var maxLength muscom.ValidatorFn[int] = func(length int) (err error) {
+	var maxLength com.ValidatorFn[int] = func(length int) (err error) {
 		if length > NameMaxLength {
 			err = ErrTooLongName
 		}
@@ -87,7 +86,7 @@ func MarshalProductV2(product ProductV2, bs []byte) (n int) {
 
 // UnmarshalProductV2 performs validation of the Product.Name field.
 func UnmarshalProductV2(bs []byte) (product ProductV2, n int, err error) {
-	var maxLength muscom.ValidatorFn[int] = func(length int) (err error) {
+	var maxLength com.ValidatorFn[int] = func(length int) (err error) {
 		if length > NameMaxLength {
 			err = ErrTooLongName
 		}

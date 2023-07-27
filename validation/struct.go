@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 
-	muscom "github.com/mus-format/mus-common-go"
+	com "github.com/mus-format/common-go"
 	"github.com/mus-format/mus-go"
 	"github.com/mus-format/mus-go/ord"
 	"github.com/mus-format/mus-go/varint"
@@ -14,8 +14,8 @@ import (
 func ValidateStruct() {
 	// Defines a Foo.a field validator and Foo.a field Skipper.
 	var (
-		ErrTooBigAField                         = errors.New("too big 'a' field")
-		avl             muscom.ValidatorFn[int] = func(a int) (err error) {
+		ErrTooBigAField                      = errors.New("too big 'a' field")
+		avl             com.ValidatorFn[int] = func(a int) (err error) {
 			if a > 10 {
 				err = ErrTooBigAField
 			}
@@ -69,7 +69,7 @@ func MarshalFoo(v Foo, bs []byte) (n int) {
 	return n + ord.MarshalString(v.c, bs[n:])
 }
 
-func UnmarshalValidFoo(avl muscom.Validator[int], ask mus.Skipper, bs []byte) (
+func UnmarshalValidFoo(avl com.Validator[int], ask mus.Skipper, bs []byte) (
 	v Foo, n int, err error) {
 	a, n, err := varint.UnmarshalInt(bs)
 	if err != nil {

@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 
-	muscom "github.com/mus-format/mus-common-go"
+	com "github.com/mus-format/common-go"
 	"github.com/mus-format/mus-go/ord"
 	"github.com/ymz-ncnk/assert"
 )
@@ -21,8 +21,8 @@ func ValidateString() {
 
 	// Defines a string length validator.
 	var (
-		ErrTooLongString                         = errors.New("too long string")
-		maxLength        muscom.ValidatorFn[int] = func(length int) error {
+		ErrTooLongString                      = errors.New("too long string")
+		maxLength        com.ValidatorFn[int] = func(length int) error {
 			if length > 5 {
 				return ErrTooLongString
 			}

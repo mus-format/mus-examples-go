@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	muscom "github.com/mus-format/mus-common-go"
+	com "github.com/mus-format/common-go"
 	"github.com/mus-format/mus-go"
 	"github.com/mus-format/mus-go/ord"
 	"github.com/mus-format/mus-go/varint"
@@ -14,15 +14,15 @@ import (
 // unmarshalling.
 func ValidateMap() {
 	var (
-		m1  mus.MarshalerFn[int]   = varint.MarshalInt   // Marshaler for map keys.
-		u1  mus.UnmarshalerFn[int] = varint.UnmarshalInt // Unmarshaler for map keys.
-		s1  mus.SizerFn[int]       = varint.SizeInt      // Sizer for map keys.
-		sk1 mus.SkipperFn          = varint.SkipInt      // Skipper for map keys.
+		m1  mus.MarshallerFn[int]   = varint.MarshalInt   // Marshaler for map keys.
+		u1  mus.UnmarshallerFn[int] = varint.UnmarshalInt // Unmarshaler for map keys.
+		s1  mus.SizerFn[int]        = varint.SizeInt      // Sizer for map keys.
+		sk1 mus.SkipperFn           = varint.SkipInt      // Skipper for map keys.
 
-		m2  mus.MarshalerFn[string]   = ord.MarshalString   // Marshaler for map values.
-		u2  mus.UnmarshalerFn[string] = ord.UnmarshalString // Unmarshaler for map values.
-		s2  mus.SizerFn[string]       = ord.SizeString      // Sizer for map values.
-		sk2 mus.SkipperFn             = ord.SkipString      // Skipper for map values.
+		m2  mus.MarshallerFn[string]   = ord.MarshalString   // Marshaler for map values.
+		u2  mus.UnmarshallerFn[string] = ord.UnmarshalString // Unmarshaler for map values.
+		s2  mus.SizerFn[string]        = ord.SizeString      // Sizer for map values.
+		sk2 mus.SkipperFn              = ord.SkipString      // Skipper for map values.
 
 		mp   = map[int]string{1: "hello", 2: "world", 3: "🙂"}
 		size = ord.SizeMap[int, string](mp, s1, s2) // == 21, where
@@ -39,8 +39,8 @@ func ValidateMap() {
 
 	// Defines a map length validator.
 	var (
-		ErrTooLongMap                         = errors.New("too long map")
-		maxLength     muscom.ValidatorFn[int] = func(length int) (err error) {
+		ErrTooLongMap                      = errors.New("too long map")
+		maxLength     com.ValidatorFn[int] = func(length int) (err error) {
 			if length > 2 {
 				err = ErrTooLongMap
 			}
@@ -84,7 +84,7 @@ func ValidateMap() {
 		NewInvalidKeyError = func(key int) error {
 			return fmt.Errorf("invalid %v key", key)
 		}
-		keyValidator muscom.ValidatorFn[int] = func(key int) (err error) {
+		keyValidator com.ValidatorFn[int] = func(key int) (err error) {
 			if key == 2 {
 				err = NewInvalidKeyError(key)
 			}
@@ -124,7 +124,7 @@ func ValidateMap() {
 		NewInvalidValueError = func(value string) error {
 			return fmt.Errorf("invalid \"%v\" value", value)
 		}
-		valValidator muscom.ValidatorFn[string] = func(value string) (err error) {
+		valValidator com.ValidatorFn[string] = func(value string) (err error) {
 			if value == "world" {
 				err = NewInvalidValueError(value)
 			}

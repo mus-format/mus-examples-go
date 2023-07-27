@@ -5,8 +5,8 @@ go 1.20
 require (
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
-	github.com/mus-format/mus-common-go v0.0.0-20230426111652-d1324c6517b3
-	github.com/mus-format/mus-go v0.0.0-20230511100407-173ccde05be0
+	github.com/mus-format/common-go v0.0.0-20230710151318-833807f397c9
+	github.com/mus-format/mus-go v0.1.2
 	github.com/ymz-ncnk/assert v0.0.0-20230509152647-f867f3f54394
 )
 
