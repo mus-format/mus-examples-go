@@ -10,7 +10,7 @@ import (
 	"github.com/ymz-ncnk/assert"
 )
 
-// Shows how you can check a struct field during unmarshaling.
+// Shows how you can check a struct field during unmarshalling.
 func ValidateStruct() {
 	// Defines a Foo.a field validator and Foo.a field Skipper.
 	var (

@@ -11,7 +11,7 @@ import (
 )
 
 // Shows how you can check the length and elements of a slice during
-// unmarshaling.
+// unmarshalling.
 func ValidateSlice() {
 	var (
 		m mus.MarshalerFn[string] = ord.MarshalString // Marshaler for slice
