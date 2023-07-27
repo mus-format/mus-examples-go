@@ -25,12 +25,12 @@ func MarshalBar(bar Bar, bs []byte) (n int) {
 }
 
 func UnmarshalBar(bs []byte) (bar Bar, n int, err error) {
-	bar.a, n, err = ord.UnmarshalString(bs)
+	bar.a, n, err = ord.UnmarshalString(bs[n:])
 	if err != nil {
 		return
 	}
 	var n1 int
-	bar.b, n1, err = ord.UnmarshalBool(bs)
+	bar.b, n1, err = ord.UnmarshalBool(bs[n:])
 	n += n1
 	return
 }

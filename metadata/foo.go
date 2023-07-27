@@ -28,12 +28,12 @@ func MarshalFoo(foo Foo, bs []byte) (n int) {
 }
 
 func UnmarshalFoo(bs []byte) (foo Foo, n int, err error) {
-	foo.a, n, err = varint.UnmarshalInt(bs)
+	foo.a, n, err = varint.UnmarshalInt(bs[n:])
 	if err != nil {
 		return
 	}
 	var n1 int
-	foo.b, n1, err = ord.UnmarshalBool(bs)
+	foo.b, n1, err = ord.UnmarshalBool(bs[n:])
 	n += n1
 	return
 }
