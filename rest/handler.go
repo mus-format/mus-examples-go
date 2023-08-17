@@ -48,7 +48,7 @@ func (h Handler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	)
 	product, err := UnmarshalAndMigrateProduct(dt, bs)
 	if err != nil {
-		sendBackUnmarshalErr(w, err)
+		sendBackUnmarshallerr(w, err)
 	}
 	h.products.Add(id, product)
 }
@@ -73,7 +73,7 @@ func readRequestBody(r *http.Request) []byte {
 	return bs
 }
 
-func sendBackUnmarshalErr(w http.ResponseWriter, err error) {
+func sendBackUnmarshallerr(w http.ResponseWriter, err error) {
 	if err == ErrTooLongName {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))

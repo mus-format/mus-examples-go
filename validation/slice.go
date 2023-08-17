@@ -14,9 +14,9 @@ import (
 // unmarshalling.
 func ValidateSlice() {
 	var (
-		m mus.MarshallerFn[string] = ord.MarshalString // Marshaler for slice
+		m mus.MarshallerFn[string] = ord.MarshalString // Marshaller for slice
 		// elements.
-		u mus.UnmarshallerFn[string] = ord.UnmarshalString // Unmarshaler for slice
+		u mus.UnmarshallerFn[string] = ord.UnmarshalString // Unmarshaller for slice
 		// elements.
 		s  mus.SizerFn[string] = ord.SizeString // Sizer for slice elements.
 		sk mus.SkipperFn       = ord.SkipString // Skipper for slice element.

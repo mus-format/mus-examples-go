@@ -14,13 +14,13 @@ import (
 // unmarshalling.
 func ValidateMap() {
 	var (
-		m1  mus.MarshallerFn[int]   = varint.MarshalInt   // Marshaler for map keys.
-		u1  mus.UnmarshallerFn[int] = varint.UnmarshalInt // Unmarshaler for map keys.
+		m1  mus.MarshallerFn[int]   = varint.MarshalInt   // Marshaller for map keys.
+		u1  mus.UnmarshallerFn[int] = varint.UnmarshalInt // Unmarshaller for map keys.
 		s1  mus.SizerFn[int]        = varint.SizeInt      // Sizer for map keys.
 		sk1 mus.SkipperFn           = varint.SkipInt      // Skipper for map keys.
 
-		m2  mus.MarshallerFn[string]   = ord.MarshalString   // Marshaler for map values.
-		u2  mus.UnmarshallerFn[string] = ord.UnmarshalString // Unmarshaler for map values.
+		m2  mus.MarshallerFn[string]   = ord.MarshalString   // Marshaller for map values.
+		u2  mus.UnmarshallerFn[string] = ord.UnmarshalString // Unmarshaller for map values.
 		s2  mus.SizerFn[string]        = ord.SizeString      // Sizer for map values.
 		sk2 mus.SkipperFn              = ord.SkipString      // Skipper for map values.
 
