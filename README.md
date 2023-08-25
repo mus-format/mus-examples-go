@@ -1,8 +1,11 @@
 # mus-examples-go
 Demonstrates several examples of using the [mus-go](https://github.com/mus-format/mus-go)
 serializer. It consists of the following packages (each package is one example):
-- metadata - shows how to use the data type metadata.
-- rest - mus-go + REST + here you can find the use of different data versions.
+- dtms - demonstrates how to use the [mus-dtms-go](https://github.com/mus-format/mus-dtms-go) 
+  module.
+- vs - demonstrates how to use the [mus-vs-go](https://github.com/mus-format/mus-vs-go) 
+  module.
+- rest - mus-go + versioning + REST.
 - validation - shows how you can validate different data types during 
   unmarshalling.
   

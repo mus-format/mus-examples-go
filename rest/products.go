@@ -6,35 +6,36 @@ import (
 	"github.com/google/uuid"
 )
 
+// Products simulates a persistence layer. Just as the server can receive old
+// product versions from the old clients, Products can receive them from the
+// storage. Therefore, we also have to use the mus-vs-go module here.
+
 func NewProducts(m map[uuid.UUID][]byte) Products {
 	return Products{m}
 }
 
-// Products imitates the Persistence layer. Take a note, it uses only the
-// current version of the Product.
+// Take a note, Products accepts and returns only the current version of
+// product.
 type Products struct {
 	m map[uuid.UUID][]byte
 }
 
-// It saves the metadata (current Version) along with the product.
+// When saving a product, we must also save its version, so we use ProductDTMS
+// here.
 func (products Products) Add(id uuid.UUID, product Product) {
-	bs := make([]byte, SizeMetaProduct(product))
-	MarshalMetaProduct(product, bs)
-
+	bs := make([]byte, ProductDTMS.SizeMUS(product))
+	ProductDTMS.MarshalMUS(product, bs)
 	products.m[id] = bs
 }
 
-// Performs migration from the old Product version to the current one.
+// We can get an old version of a product from the storage, so we use ProductVS
+// here, which migrates such old versions to the current one.
 func (products Products) Get(id uuid.UUID) (product Product, err error) {
 	bs, pst := products.m[id]
 	if !pst {
 		err = errors.New("not found")
 		return
 	}
-
-	dt, n, err := UnmarshalDataType(bs)
-	if err != nil {
-		return
-	}
-	return UnmarshalAndMigrateProduct(dt, bs[n:])
+	_, product, _, err = ProductVS.UnmarshalMUS(bs)
+	return
 }

@@ -1,7 +1,10 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/ymz-ncnk/assert"
 )
 
@@ -24,43 +27,40 @@ func init() {
 //	}
 //
 // , and limit the length of the "Name" field to 20 characters.
-// As a result, we have two versions of the products: V1 - old and V2 - current,
-// as well as two clients: old and current.
+// As a result, we have two versions of the products: ProductV1 - old and
+// ProductV2 - current, as well as two clients - old and current.
+//
+// Only the current product version should be used everywhere on the server. To
+// achieve this goal, we need to understand that there are only two sources of
+// old versions on the server - old clients and the storage. And that, in the
+// appropriate places (server handlers and persistence layer) we will have to do
+// the migration of old versions to the current one with help of mus-dtms-go and
+// mus-vs-go modules.
+//
+// You can see how this approach is being implemented in the following files:
+// - client.go 		 - client side.
+// - server.go 		 - contains server side handlers.
+// - products.go 	 - server side persistence layer.
+// - product.go 	 - defines product versions.
+// - mus-format.go - identifiers related to the MUS format.
 func main() {
 	var (
-		oldID = uuid.New()
-		// Products simulates the Persistence layer. Note that it only uses the
-		// current version of the product.
+		oldID    = uuid.New()
 		products = makeProducts(oldID)
-
-		// In general, only the current product version should be used everywhere on
-		// the server.
-		//
-		// To achieve this goal, we need to understand that there are only two
-		// sources of old versions on the server - old clients and the storage.
-		// And that, in the appropriate places (View and Persistence layers) we will
-		// have to do the migration of old versions to the current one.
-		// By the way, this migration looks like one fairly simple function.
-		//
-		// And one more thing, we also need to return old versions to old clients.
-		// That is, we will still need to implement the migration of the current
-		// version to the old one at the View level.
 	)
 	go startServer(products)
-
 	var (
 		client    = NewClient()
-		oldClient = NewClientV1()
+		oldClient = NewOldClient()
 	)
-
-	// The current client requests an older version of the product. The old
-	// version on the server will be migrated to the current version, which will
-	// be returned to the client.
+	// The current client requests an old version of the product. The old version
+	// on the server will be migrated to the current version, which will be
+	// returned to the client.
 	clientRequestsOldVersion(client, oldID)
 
-	// An old client creates an old version of the product. The old version on the
-	// server will be migrated to the current version, which will be saved to the
-	// storage.
+	// The old client creates an old version of the product. The old version on
+	// the server will be migrated to the current version, which will be saved to
+	// the storage.
 	oldClientCreatesOldVersion(oldClient)
 
 	// The current client creates the current version of the product. The current
@@ -72,12 +72,12 @@ func main() {
 	// returned to the client.
 	oldClientRequestsCurrentVersion(oldClient, id)
 
-	// The current client is trying to create an invalid product. An error will
-	// occur during deserialization.
+	// The current client tries to create an invalid product. An error will occur
+	// on server during deserialization.
 	clientCreatesInvalid(client)
 
-	// An old client tries to create an invalid product. An error will occur
-	// during deserialization.
+	// The old client tries to create an invalid product. An error will occur
+	// on server during deserialization.
 	oldClientCreatesInvalid(oldClient)
 
 }
@@ -89,7 +89,7 @@ func clientRequestsOldVersion(client Client, oldID uuid.UUID) {
 		Product{Name: "old", Description: "Undefined"})
 }
 
-func oldClientCreatesOldVersion(client ClientV1) {
+func oldClientCreatesOldVersion(client OldClient) {
 	id := uuid.New()
 	prodcut := ProductV1{Name: "another old"}
 	err := client.CreateProduct(id, prodcut)
@@ -104,13 +104,13 @@ func clientCreatesCurrentVersion(client Client) (id uuid.UUID) {
 	return
 }
 
-func oldClientRequestsCurrentVersion(client ClientV1, id uuid.UUID) {
+func oldClientRequestsCurrentVersion(client OldClient, id uuid.UUID) {
 	product, err := client.GetProduct(id)
 	assert.EqualError(err, nil)
 	assert.EqualDeep(product, ProductV1{Name: "current"})
 }
 
-func oldClientCreatesInvalid(client ClientV1) {
+func oldClientCreatesInvalid(client OldClient) {
 	id := uuid.New()
 	product := ProductV1{Name: "very very very long name"}
 	err := client.CreateProduct(id, product)
@@ -126,10 +126,20 @@ func clientCreatesInvalid(client Client) {
 
 // makeProducts creates Products, which provides access to the old version of
 // the product.
-func makeProducts(idV1 uuid.UUID) Products {
+func makeProducts(id uuid.UUID) Products {
 	product := ProductV1{Name: "old"}
-	bs := make([]byte, SizeMetaProductV1(product))
-	MarshalMetaProductV1(product, bs)
+	bs := make([]byte, ProductV1DTMS.SizeMUS(product))
+	ProductV1DTMS.MarshalMUS(product, bs)
+	return NewProducts(map[uuid.UUID][]byte{id: bs})
+}
 
-	return NewProducts(map[uuid.UUID][]byte{idV1: bs})
+func startServer(products Products) {
+	var (
+		h = NewHandler(products)
+		r = mux.NewRouter()
+	)
+	r.HandleFunc("/products/{id}", h.HandleGet).Methods(http.MethodGet)
+	r.HandleFunc("/products/{id}", h.HandlePut).Methods(http.MethodPut)
+
+	http.ListenAndServe(":8090", r)
 }
