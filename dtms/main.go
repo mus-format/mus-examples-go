@@ -9,7 +9,7 @@ import (
 //
 // The mus-dtms-go module allows us to create data type metadata support for a
 // type. Thus, for example, for the Foo type, we can create FooDTMS, which
-// in turn allows us to encode/decode FooDTM + Foo data itself.
+// in turn allows us to encode/decode FooDTM + Foo data.
 func main() {
 	var (
 		foo = Foo{num: 10}

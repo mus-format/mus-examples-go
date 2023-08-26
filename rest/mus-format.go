@@ -5,16 +5,16 @@ import (
 
 	com "github.com/mus-format/common-go"
 	dtms "github.com/mus-format/mus-dtms-go"
+	dvs "github.com/mus-format/mus-dvs-go"
 	"github.com/mus-format/mus-go"
 	"github.com/mus-format/mus-go/ord"
-	vs "github.com/mus-format/mus-vs-go"
 )
 
 // Contains all MUS format related constants, variables and functions. Here you
 // can find:
 // - Marshal/Unmarshal/Size functions for each product version.
 // - Data Type Metadata Support (DTMS) for each product version.
-// - Versioning Support (VS) for the product.
+// - Data Versioning Support (DVS) for the product.
 
 // -----------------------------------------------------------------------------
 // Marshal/Unmarshal/Size functions for each product version.
@@ -108,11 +108,11 @@ var ProductV2DTMS = dtms.New[ProductV2](ProductV2DTM,
 	mus.SizerFn[ProductV2](SizeProductV2MUS))
 
 // -----------------------------------------------------------------------------
-// VS for the product.
+// DVS for the product.
 // -----------------------------------------------------------------------------
 
-var registry = vs.NewRegistry([]vs.TypeVersion{
-	vs.Version[ProductV1, Product]{
+var registry = dvs.NewRegistry([]dvs.TypeVersion{
+	dvs.Version[ProductV1, Product]{
 		DTMS: ProductV1DTMS,
 		MigrateOld: func(t ProductV1) (v Product, err error) {
 			v = ProductV2{
@@ -128,7 +128,7 @@ var registry = vs.NewRegistry([]vs.TypeVersion{
 			return
 		},
 	},
-	vs.Version[ProductV2, Product]{
+	dvs.Version[ProductV2, Product]{
 		DTMS: ProductV2DTMS,
 		MigrateOld: func(t ProductV2) (v ProductV2, err error) {
 			return t, nil
@@ -139,4 +139,4 @@ var registry = vs.NewRegistry([]vs.TypeVersion{
 	},
 })
 
-var ProductVS = vs.New[Product](registry)
+var ProductDVS = dvs.New[Product](registry)

@@ -4,10 +4,10 @@ import (
 	"strconv"
 
 	dtms "github.com/mus-format/mus-dtms-go"
+	dvs "github.com/mus-format/mus-dvs-go"
 	"github.com/mus-format/mus-go"
 	"github.com/mus-format/mus-go/ord"
 	"github.com/mus-format/mus-go/varint"
-	vs "github.com/mus-format/mus-vs-go"
 )
 
 // -----------------------------------------------------------------------------
@@ -89,27 +89,27 @@ var BarV1DTMS = dtms.New[BarV1](BarV1DTM,
 )
 
 // -----------------------------------------------------------------------------
-// Versioning Support (VS).
+// Data Versioning Support (DVS).
 // -----------------------------------------------------------------------------
 
 // First, we need to create a registry of all the versions we support. To do
-// this, we use the vs.Version type. This type is actually quite simple, it
+// this, we use the dvs.Version type. This type is actually quite simple, it
 // contains DTMS and migrate functions, one of which migrates the old version to
 // the current one, and the other do the opposite - migrates current to old.
 //
 // PLEASE NOTE that the index of each version in the registry must be equal
 // to its DTM, i.e:
 //
-//	registry[FooV1DTM] == vs.Version[FooV1, Foo]
-//	registry[FooV2DTM] == vs.Version[FooV2, Foo]
-//	registry[BarV1DTM] == vs.Version[BarV1, Foo]
+//	registry[FooV1DTM] == dvs.Version[FooV1, Foo]
+//	registry[FooV2DTM] == dvs.Version[FooV2, Foo]
+//	registry[BarV1DTM] == dvs.Version[BarV1, Foo]
 //
 // Thanks to this, we can very quickly get the version we need from the
 // registry.
-var registry = vs.NewRegistry(
-	[]vs.TypeVersion{
+var registry = dvs.NewRegistry(
+	[]dvs.TypeVersion{
 		// FooV1 version.
-		vs.Version[FooV1, Foo]{
+		dvs.Version[FooV1, Foo]{
 			DTMS: FooV1DTMS,
 			MigrateOld: func(t FooV1) (v Foo, err error) {
 				v.str = strconv.Itoa(t.num)
@@ -121,7 +121,7 @@ var registry = vs.NewRegistry(
 			},
 		},
 		// FooV2 version.
-		vs.Version[FooV2, Foo]{
+		dvs.Version[FooV2, Foo]{
 			DTMS: FooV2DTMS,
 			MigrateOld: func(t FooV2) (v Foo, err error) {
 				return Foo(t), nil
@@ -131,7 +131,7 @@ var registry = vs.NewRegistry(
 			},
 		},
 		// BarV1 version.
-		vs.Version[BarV1, Bar]{
+		dvs.Version[BarV1, Bar]{
 			DTMS: BarV1DTMS,
 			MigrateOld: func(t BarV1) (v Bar, err error) {
 				return Bar(t), nil
@@ -144,6 +144,6 @@ var registry = vs.NewRegistry(
 )
 
 // And finally we create versioning support for our types. Please note that we
-// use a single registry for all the VS types.
-var FooVS = vs.New[Foo](registry)
-var BarVS = vs.New[Bar](registry)
+// use a single registry for all the DVS types.
+var FooDVS = dvs.New[Foo](registry)
+var BarDVS = dvs.New[Bar](registry)

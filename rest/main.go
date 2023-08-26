@@ -35,7 +35,7 @@ func init() {
 // old versions on the server - old clients and the storage. And that, in the
 // appropriate places (server handlers and persistence layer) we will have to do
 // the migration of old versions to the current one with help of mus-dtms-go and
-// mus-vs-go modules.
+// mus-dvs-go modules.
 //
 // You can see how this approach is being implemented in the following files:
 // - client.go 		 - client side.

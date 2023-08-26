@@ -11,7 +11,7 @@ import (
 	"github.com/ymz-ncnk/assert"
 )
 
-// On the server side, we use the mus-vs-go module, namely ProductVS, to:
+// On the server side, we use the mus-dvs-go module, namely ProductDVS, to:
 // 1. Get the current version of the product from any client.
 // 2. Send to the client the version of the product it needs.
 
@@ -38,8 +38,8 @@ func (h Handler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	// Using DTM, the client indicates which version of the product it wants to
 	// receive.
 	dtm := parseDTM(r)
-	// ProducVS will migrate the product to the appropriate version.
-	bs, _, err := ProductVS.MakeBSAndMarshalMUS(dtm, product)
+	// ProducDVS will migrate the product to the appropriate version.
+	bs, _, err := ProductDVS.MakeBSAndMarshalMUS(dtm, product)
 	assert.EqualError(err, nil)
 
 	_, err = w.Write(bs)
@@ -55,9 +55,9 @@ func (h Handler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	// bs contains a DTM and data itself. The DTM also determines the version of
 	// the data.
 	//
-	// If there is an old version of the product in bs, ProductVS migrates it to
+	// If there is an old version of the product in bs, ProductDVS migrates it to
 	// the current version.
-	_, product, _, err := ProductVS.UnmarshalMUS(bs)
+	_, product, _, err := ProductDVS.UnmarshalMUS(bs)
 	if err != nil {
 		sendBackUnmarshallerr(w, err)
 	}
