@@ -7,8 +7,8 @@ import (
 
 // This example demonstrates how to use the mus-dvs-go module.
 //
-// mus-dvs-go provides versioning support for the mus-go serializer. With the
-// mus-dvs-go module we can do 2 thigs:
+// mus-dvs-go provides data versioning support for the mus-go serializer. With
+// the mus-dvs-go module we can do 2 thigs:
 // 1. Marshal the current version as if it was an old version.
 // 2. Unmarshal the old version as if it was the current version.
 func main() {
