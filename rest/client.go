@@ -8,11 +8,11 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
-	dtms "github.com/mus-format/mus-dtms-go"
+	com "github.com/mus-format/common-go"
 	"github.com/ymz-ncnk/assert"
 )
 
-// Each client works with only one product version, so we use the mus-dtms-go
+// Each client works with only one product version, so we use the mus-dts-go
 // module (which helps us to marshal/unmarshal specific product version) on the
 // client side.
 
@@ -29,11 +29,11 @@ type Client struct {
 }
 
 func (c Client) CreateProduct(id uuid.UUID, product Product) (err error) {
-	// ProductDTMS encodes product DTM (which also indicates the version of the
+	// ProductDTS encodes product DTM (which also indicates the version of the
 	// product) and product itself to the bs. This allows the server to know which
 	// version of the product it is dealing with.
-	bs := make([]byte, ProductDTMS.SizeMUS(product))
-	ProductDTMS.MarshalMUS(product, bs)
+	bs := make([]byte, ProductDTS.SizeMUS(product))
+	ProductDTS.MarshalMUS(product, bs)
 	return doPUT(id, bs, c.client)
 }
 
@@ -45,8 +45,8 @@ func (c Client) GetProduct(id uuid.UUID) (product Product, err error) {
 		return
 	}
 	// bs here will also contain the product DTM and the product itself, so we
-	// should use ProductDTMS.
-	product, _, err = ProductDTMS.UnmarshalMUS(bs)
+	// should use ProductDTS.
+	product, _, err = ProductDTS.UnmarshalMUS(bs)
 	return
 }
 
@@ -57,14 +57,14 @@ func NewOldClient() OldClient {
 	return OldClient{&http.Client{}}
 }
 
-// OldClient works with products of the old V1 version. Uses ProductV1DTMS.
+// OldClient works with products of the old V1 version. Uses ProductV1DTS.
 type OldClient struct {
 	client *http.Client
 }
 
 func (c OldClient) CreateProduct(id uuid.UUID, product ProductV1) (err error) {
-	bs := make([]byte, ProductV1DTMS.SizeMUS(product))
-	ProductV1DTMS.MarshalMUS(product, bs)
+	bs := make([]byte, ProductV1DTS.SizeMUS(product))
+	ProductV1DTS.MarshalMUS(product, bs)
 	return doPUT(id, bs, c.client)
 }
 
@@ -73,7 +73,7 @@ func (c OldClient) GetProduct(id uuid.UUID) (product ProductV1, err error) {
 	if err != nil {
 		return
 	}
-	product, _, err = ProductV1DTMS.UnmarshalMUS(bs)
+	product, _, err = ProductV1DTS.UnmarshalMUS(bs)
 	return
 }
 
@@ -105,14 +105,14 @@ func doPUT(id uuid.UUID, bs []byte, client *http.Client) (
 
 // doGet adds a "DTM" header to the request, which helps the server understand
 // what version of the product it should return.
-func doGet(id uuid.UUID, dt dtms.DTM, client *http.Client) (bs []byte,
+func doGet(id uuid.UUID, dtm com.DTM, client *http.Client) (bs []byte,
 	err error) {
 	url := "http://localhost:8090/products/" + id.String()
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return
 	}
-	req.Header.Add(DTMHeaderName, strconv.Itoa(int(dt)))
+	req.Header.Add(DTMHeaderName, strconv.Itoa(int(dtm)))
 	res, err := client.Do(req)
 	if err != nil {
 		return

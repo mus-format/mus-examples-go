@@ -3,7 +3,8 @@ package main
 import (
 	"strconv"
 
-	dtms "github.com/mus-format/mus-dtms-go"
+	com "github.com/mus-format/common-go"
+	dts "github.com/mus-format/mus-dts-go"
 	dvs "github.com/mus-format/mus-dvs-go"
 	"github.com/mus-format/mus-go"
 	"github.com/mus-format/mus-go/ord"
@@ -15,7 +16,7 @@ import (
 // -----------------------------------------------------------------------------
 
 const (
-	FooV1DTM dtms.DTM = iota
+	FooV1DTM com.DTM = iota
 	FooV2DTM
 	BarV1DTM
 )
@@ -67,22 +68,22 @@ func SizeBarV1MUS(foo BarV1) (size int) {
 }
 
 // -----------------------------------------------------------------------------
-// Data Type Metadata Support (DTMS).
+// Data Type Metadata Support (DTS).
 // -----------------------------------------------------------------------------
 
-var FooV1DTMS = dtms.New[FooV1](FooV1DTM,
+var FooV1DTS = dts.New[FooV1](FooV1DTM,
 	mus.MarshallerFn[FooV1](MarshalFooV1MUS),
 	mus.UnmarshallerFn[FooV1](UnmarshalFooV1MUS),
 	mus.SizerFn[FooV1](SizeFooV1MUS),
 )
 
-var FooV2DTMS = dtms.New[FooV2](FooV2DTM,
+var FooV2DTS = dts.New[FooV2](FooV2DTM,
 	mus.MarshallerFn[FooV2](MarshalFooV2MUS),
 	mus.UnmarshallerFn[FooV2](UnmarshalFooV2MUS),
 	mus.SizerFn[FooV2](SizeFooV2MUS),
 )
 
-var BarV1DTMS = dtms.New[BarV1](BarV1DTM,
+var BarV1DTS = dts.New[BarV1](BarV1DTM,
 	mus.MarshallerFn[BarV1](MarshalBarV1MUS),
 	mus.UnmarshallerFn[BarV1](UnmarshalBarV1MUS),
 	mus.SizerFn[BarV1](SizeBarV1MUS),
@@ -94,7 +95,7 @@ var BarV1DTMS = dtms.New[BarV1](BarV1DTM,
 
 // First, we need to create a registry of all the versions we support. To do
 // this, we use the dvs.Version type. This type is actually quite simple, it
-// contains DTMS and migrate functions, one of which migrates the old version to
+// contains DTS and migrate functions, one of which migrates the old version to
 // the current one, and the other do the opposite - migrates current to old.
 //
 // PLEASE NOTE that the index of each version in the registry must be equal
@@ -110,7 +111,7 @@ var registry = dvs.NewRegistry(
 	[]dvs.TypeVersion{
 		// FooV1 version.
 		dvs.Version[FooV1, Foo]{
-			DTMS: FooV1DTMS,
+			DTS: FooV1DTS,
 			MigrateOld: func(t FooV1) (v Foo, err error) {
 				v.str = strconv.Itoa(t.num)
 				return
@@ -122,7 +123,7 @@ var registry = dvs.NewRegistry(
 		},
 		// FooV2 version.
 		dvs.Version[FooV2, Foo]{
-			DTMS: FooV2DTMS,
+			DTS: FooV2DTS,
 			MigrateOld: func(t FooV2) (v Foo, err error) {
 				return Foo(t), nil
 			},
@@ -132,7 +133,7 @@ var registry = dvs.NewRegistry(
 		},
 		// BarV1 version.
 		dvs.Version[BarV1, Bar]{
-			DTMS: BarV1DTMS,
+			DTS: BarV1DTS,
 			MigrateOld: func(t BarV1) (v Bar, err error) {
 				return Bar(t), nil
 			},

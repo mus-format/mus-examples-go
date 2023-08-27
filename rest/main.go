@@ -34,7 +34,7 @@ func init() {
 // achieve this goal, we need to understand that there are only two sources of
 // old versions on the server - old clients and the storage. And that, in the
 // appropriate places (server handlers and persistence layer) we will have to do
-// the migration of old versions to the current one with help of mus-dtms-go and
+// the migration of old versions to the current one with help of mus-dts-go and
 // mus-dvs-go modules.
 //
 // You can see how this approach is being implemented in the following files:
@@ -128,8 +128,8 @@ func clientCreatesInvalid(client Client) {
 // the product.
 func makeProducts(id uuid.UUID) Products {
 	product := ProductV1{Name: "old"}
-	bs := make([]byte, ProductV1DTMS.SizeMUS(product))
-	ProductV1DTMS.MarshalMUS(product, bs)
+	bs := make([]byte, ProductV1DTS.SizeMUS(product))
+	ProductV1DTS.MarshalMUS(product, bs)
 	return NewProducts(map[uuid.UUID][]byte{id: bs})
 }
 

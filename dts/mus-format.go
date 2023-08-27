@@ -1,7 +1,8 @@
 package main
 
 import (
-	dtms "github.com/mus-format/mus-dtms-go"
+	com "github.com/mus-format/common-go"
+	dts "github.com/mus-format/mus-dts-go"
 	"github.com/mus-format/mus-go"
 	"github.com/mus-format/mus-go/varint"
 )
@@ -11,7 +12,7 @@ import (
 // -----------------------------------------------------------------------------
 
 const (
-	FooDTM dtms.DTM = iota
+	FooDTM com.DTM = iota
 	BarDTM
 )
 
@@ -33,10 +34,10 @@ func SizeFooMUS(foo Foo) (size int) {
 }
 
 // -----------------------------------------------------------------------------
-// Data Type Metadata Support (DTMS).
+// Data Type Metadata Support (DTS).
 // -----------------------------------------------------------------------------
 
-var FooDTMS = dtms.New[Foo](FooDTM,
+var FooDTS = dts.New[Foo](FooDTM,
 	mus.MarshallerFn[Foo](MarshalFooMUS),
 	mus.UnmarshallerFn[Foo](UnmarshalFooMUS),
 	mus.SizerFn[Foo](SizeFooMUS),

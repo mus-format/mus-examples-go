@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	com "github.com/mus-format/common-go"
-	dtms "github.com/mus-format/mus-dtms-go"
+	dts "github.com/mus-format/mus-dts-go"
 	dvs "github.com/mus-format/mus-dvs-go"
 	"github.com/mus-format/mus-go"
 	"github.com/mus-format/mus-go/ord"
@@ -13,7 +13,7 @@ import (
 // Contains all MUS format related constants, variables and functions. Here you
 // can find:
 // - Marshal/Unmarshal/Size functions for each product version.
-// - Data Type Metadata Support (DTMS) for each product version.
+// - Data Type Metadata Support (DTS) for each product version.
 // - Data Versioning Support (DVS) for the product.
 
 // -----------------------------------------------------------------------------
@@ -80,29 +80,29 @@ func SizeProductV2MUS(product ProductV2) (size int) {
 }
 
 // -----------------------------------------------------------------------------
-// DTMS for each product version.
+// DTS for each product version.
 // -----------------------------------------------------------------------------
 
 // Product DTMs. Each DTM also defines a product version.
 const (
-	ProductV1DTM dtms.DTM = iota
+	ProductV1DTM com.DTM = iota
 	ProductV2DTM
 )
 
 // DTM of the current product version.
 const ProductDTM = ProductV2DTM
 
-// DTMS of the current product version.
-var ProductDTMS = ProductV2DTMS
+// DTS of the current product version.
+var ProductDTS = ProductV2DTS
 
-// DTMS of the first product version.
-var ProductV1DTMS = dtms.New[ProductV1](ProductV1DTM,
+// DTS of the first product version.
+var ProductV1DTS = dts.New[ProductV1](ProductV1DTM,
 	mus.MarshallerFn[ProductV1](MarshalProductV1MUS),
 	mus.UnmarshallerFn[ProductV1](UnmarshalProductV1MUS),
 	mus.SizerFn[ProductV1](SizeProductV1MUS))
 
-// DTMS of the second product version.
-var ProductV2DTMS = dtms.New[ProductV2](ProductV2DTM,
+// DTS of the second product version.
+var ProductV2DTS = dts.New[ProductV2](ProductV2DTM,
 	mus.MarshallerFn[ProductV2](MarshalProductV2MUS),
 	mus.UnmarshallerFn[ProductV2](UnmarshalProductV2MUS),
 	mus.SizerFn[ProductV2](SizeProductV2MUS))
@@ -113,7 +113,7 @@ var ProductV2DTMS = dtms.New[ProductV2](ProductV2DTM,
 
 var registry = dvs.NewRegistry([]dvs.TypeVersion{
 	dvs.Version[ProductV1, Product]{
-		DTMS: ProductV1DTMS,
+		DTS: ProductV1DTS,
 		MigrateOld: func(t ProductV1) (v Product, err error) {
 			v = ProductV2{
 				Name:        t.Name,
@@ -129,7 +129,7 @@ var registry = dvs.NewRegistry([]dvs.TypeVersion{
 		},
 	},
 	dvs.Version[ProductV2, Product]{
-		DTMS: ProductV2DTMS,
+		DTS: ProductV2DTS,
 		MigrateOld: func(t ProductV2) (v ProductV2, err error) {
 			return t, nil
 		},

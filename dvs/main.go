@@ -1,7 +1,7 @@
 package main
 
 import (
-	dtms "github.com/mus-format/mus-dtms-go"
+	com "github.com/mus-format/common-go"
 	"github.com/ymz-ncnk/assert"
 )
 
@@ -22,19 +22,20 @@ func main() {
 	bs, _, _ = FooDVS.MakeBSAndMarshalMUS(FooV1DTM, foo)
 
 	// We should find the FooV1 version in bs.
-	fooV1, _, _ := FooV1DTMS.UnmarshalMUS(bs)
+	fooV1, _, _ := FooV1DTS.UnmarshalMUS(bs)
 	assert.EqualDeep(fooV1, FooV1{num: 5})
 
 	// 2. Unmarshal the old version as if it was the current version.
 	// Fill bs with the FooV1 version.
 	fooV1 = FooV1{num: 10}
-	bs = make([]byte, FooV1DTMS.SizeMUS(fooV1))
-	FooV1DTMS.MarshalMUS(fooV1, bs)
+	bs = make([]byte, FooV1DTS.SizeMUS(fooV1))
+	FooV1DTS.MarshalMUS(fooV1, bs)
 
-	// Unmarshals the FooV1 version from bs, and then migrates it to the Foo type.
+	// Unmarshals the FooV1 version from bs, and then migrates it to the current
+	// version.
 	dt, foo, _, _ := FooDVS.UnmarshalMUS(bs)
 
 	// We have to get the correct Foo.
-	assert.Equal[dtms.DTM](dt, FooV1DTM)
+	assert.Equal[com.DTM](dt, FooV1DTM)
 	assert.EqualDeep(foo, Foo{str: "10"})
 }

@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	dtms "github.com/mus-format/mus-dtms-go"
+	com "github.com/mus-format/common-go"
 	"github.com/ymz-ncnk/assert"
 )
 
@@ -73,10 +73,10 @@ func parseID(r *http.Request) (id uuid.UUID) {
 	return
 }
 
-func parseDTM(r *http.Request) (dt dtms.DTM) {
+func parseDTM(r *http.Request) (dtm com.DTM) {
 	n, err := strconv.ParseUint(r.Header.Get(DTMHeaderName), 10, 8)
 	assert.EqualError(err, nil)
-	return dtms.DTM(n)
+	return com.DTM(n)
 }
 
 func readRequestBody(r *http.Request) []byte {

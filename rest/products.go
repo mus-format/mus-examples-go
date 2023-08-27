@@ -20,11 +20,11 @@ type Products struct {
 	m map[uuid.UUID][]byte
 }
 
-// When saving a product, we must also save its version, so we use ProductDTMS
+// When saving a product, we must also save its version, so we use ProductDTS
 // here.
 func (products Products) Add(id uuid.UUID, product Product) {
-	bs := make([]byte, ProductDTMS.SizeMUS(product))
-	ProductDTMS.MarshalMUS(product, bs)
+	bs := make([]byte, ProductDTS.SizeMUS(product))
+	ProductDTS.MarshalMUS(product, bs)
 	products.m[id] = bs
 }
 
