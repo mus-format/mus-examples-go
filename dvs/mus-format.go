@@ -107,8 +107,8 @@ var BarV1DTS = dts.New[BarV1](BarV1DTM,
 //
 // Thanks to this, we can very quickly get the version we need from the
 // registry.
-var registry = dvs.NewRegistry(
-	[]dvs.TypeVersion{
+var registry = com.NewRegistry(
+	[]com.TypeVersion{
 		// FooV1 version.
 		dvs.Version[FooV1, Foo]{
 			DTS: FooV1DTS,

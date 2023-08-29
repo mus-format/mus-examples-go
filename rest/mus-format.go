@@ -111,7 +111,7 @@ var ProductV2DTS = dts.New[ProductV2](ProductV2DTM,
 // DVS for the product.
 // -----------------------------------------------------------------------------
 
-var registry = dvs.NewRegistry([]dvs.TypeVersion{
+var registry = com.NewRegistry([]com.TypeVersion{
 	dvs.Version[ProductV1, Product]{
 		DTS: ProductV1DTS,
 		MigrateOld: func(t ProductV1) (v Product, err error) {
