@@ -38,11 +38,11 @@ func init() {
 // mus-dvs-go modules.
 //
 // You can see how this approach is being implemented in the following files:
-// - client.go 		 - client side.
-// - server.go 		 - contains server side handlers.
-// - products.go 	 - server side persistence layer.
-// - product.go 	 - defines product versions.
-// - mus-format.go - identifiers related to the MUS format.
+// - client.go 		 	- client side.
+// - server.go 		 	- contains server side handlers.
+// - products.go 	 	- server side persistence layer.
+// - product.go 	 	- defines product versions.
+// - mus-format.go	- contains MUS format definitions.
 func main() {
 	var (
 		oldID    = uuid.New()
