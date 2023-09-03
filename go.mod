@@ -6,9 +6,9 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/mus-format/common-go v0.0.0-20230828235912-098b21ff73ae
-	github.com/mus-format/mus-dts-go v0.0.0-20230829131223-334c53a214c7
-	github.com/mus-format/mus-dvs-go v0.0.0-20230829132711-a1bcea95f183
-	github.com/mus-format/mus-go v0.1.3
+	github.com/mus-format/mus-dts-go v0.1.0
+	github.com/mus-format/mus-dvs-go v0.1.0
+	github.com/mus-format/mus-go v0.1.4
 	github.com/ymz-ncnk/assert v0.0.0-20230825183847-259f293c18a7
 )
 
