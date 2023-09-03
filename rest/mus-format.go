@@ -17,7 +17,20 @@ import (
 // - Data Versioning Support (DVS) for the product.
 
 // -----------------------------------------------------------------------------
-// Marshal/Unmarshal/Size functions for each product version.
+// DTM
+// -----------------------------------------------------------------------------
+
+// Each DTM also defines a product version.
+const (
+	ProductV1DTM com.DTM = iota
+	ProductV2DTM
+)
+
+// DTM of the current product version.
+const ProductDTM = ProductV2DTM
+
+// -----------------------------------------------------------------------------
+// Marshal/Unmarshal/Size functions
 // -----------------------------------------------------------------------------
 
 // Max length of the product name (used for validation).
@@ -80,35 +93,27 @@ func SizeProductV2MUS(product ProductV2) (size int) {
 }
 
 // -----------------------------------------------------------------------------
-// DTS for each product version.
+// Data Type Metadata Support (DTS)
 // -----------------------------------------------------------------------------
 
-// Product DTMs. Each DTM also defines a product version.
-const (
-	ProductV1DTM com.DTM = iota
-	ProductV2DTM
+var (
+	// DTS of the first product version.
+	ProductV1DTS = dts.New[ProductV1](ProductV1DTM,
+		mus.MarshallerFn[ProductV1](MarshalProductV1MUS),
+		mus.UnmarshallerFn[ProductV1](UnmarshalProductV1MUS),
+		mus.SizerFn[ProductV1](SizeProductV1MUS))
+	// DTS of the second product version.
+	ProductV2DTS = dts.New[ProductV2](ProductV2DTM,
+		mus.MarshallerFn[ProductV2](MarshalProductV2MUS),
+		mus.UnmarshallerFn[ProductV2](UnmarshalProductV2MUS),
+		mus.SizerFn[ProductV2](SizeProductV2MUS))
 )
-
-// DTM of the current product version.
-const ProductDTM = ProductV2DTM
 
 // DTS of the current product version.
 var ProductDTS = ProductV2DTS
 
-// DTS of the first product version.
-var ProductV1DTS = dts.New[ProductV1](ProductV1DTM,
-	mus.MarshallerFn[ProductV1](MarshalProductV1MUS),
-	mus.UnmarshallerFn[ProductV1](UnmarshalProductV1MUS),
-	mus.SizerFn[ProductV1](SizeProductV1MUS))
-
-// DTS of the second product version.
-var ProductV2DTS = dts.New[ProductV2](ProductV2DTM,
-	mus.MarshallerFn[ProductV2](MarshalProductV2MUS),
-	mus.UnmarshallerFn[ProductV2](UnmarshalProductV2MUS),
-	mus.SizerFn[ProductV2](SizeProductV2MUS))
-
 // -----------------------------------------------------------------------------
-// DVS for the product.
+// Data Versioning Support (DVS)
 // -----------------------------------------------------------------------------
 
 var registry = com.NewRegistry([]com.TypeVersion{

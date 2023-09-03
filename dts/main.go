@@ -5,11 +5,11 @@ import (
 	"github.com/ymz-ncnk/assert"
 )
 
-// This example demonstrates how to use the mus-dts-go module.
+// This example demonstrates how to use mus-dts-go.
 //
-// The mus-dts-go module allows us to create data type metadata support for a
-// type. Thus, for example, for the Foo type, we can create FooDTS, which
-// in turn allows us to encode/decode FooDTM + Foo data.
+// mus-dts-go allows us to create data type metadata support for a type. Thus,
+// for example, for the Foo type, we can create FooDTS, which in turn allows us
+// to encode/decode FooDTM + Foo data.
 func main() {
 	var (
 		foo = Foo{num: 10}
