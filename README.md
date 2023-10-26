@@ -6,7 +6,7 @@ serializer. It consists of the following packages (each package is one example):
 - rest - mus-go + data versioning + REST.
 - oneof - shows how you can Marshal/Unmarshal interface (or demonstrates oneof 
   feature).
-- pm - contains two examples that demonstrate the use of the `pm` package to 
+- pm - contains two examples that demonstrate how to use the `pm` package to 
   serialize a graph and a linked list.
 - validation - shows how you can validate different data types during 
   unmarshalling.
