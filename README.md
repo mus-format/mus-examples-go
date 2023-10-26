@@ -7,7 +7,7 @@ serializer. It consists of the following packages (each package is one example):
 - oneof - shows how you can Marshal/Unmarshal interface (or demonstrates oneof 
   feature).
 - pm - contains two examples that demonstrate the use of the `pm` package to 
-  serialize a graph and linked list data structures.
+  serialize a graph and a linked list.
 - validation - shows how you can validate different data types during 
   unmarshalling.
 
