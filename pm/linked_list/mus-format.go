@@ -13,7 +13,7 @@ import (
 
 // NewElemMarshaller creates a new Elem marshaller.
 //
-// valM param defines the Elem value marshaller, elemM - Elem marshaller.
+// valM param is an Elem value marshaller, elemM - Elem marshaller.
 func NewElemMarshaller[T any](valM mus.Marshaller[T],
 	eleM *mus.Marshaller[*Elem[T]]) mus.Marshaller[Elem[T]] {
 	return mus.MarshallerFn[Elem[T]](
@@ -27,7 +27,7 @@ func NewElemMarshaller[T any](valM mus.Marshaller[T],
 
 // NewElemUnmarshaller creates a new Elem unmarshaller.
 //
-// valU param defines the Elem value unmarshaller, elemU - Elem unmarshaller.
+// valU param is an Elem value unmarshaller, elemU - Elem unmarshaller.
 func NewElemUnmarshaller[T any](valU mus.Unmarshaller[T],
 	elemU *mus.Unmarshaller[*Elem[T]]) mus.Unmarshaller[Elem[T]] {
 	return mus.UnmarshallerFn[Elem[T]](
@@ -51,7 +51,7 @@ func NewElemUnmarshaller[T any](valU mus.Unmarshaller[T],
 
 // NewElemSizer creates a new Elem sizer.
 //
-// valS parm defines the Elem value sizer, elemS - Elem sizer.
+// valS param is an Elem value sizer, elemS - Elem sizer.
 func NewElemSizer[T any](valS mus.Sizer[T],
 	elemS *mus.Sizer[*Elem[T]]) mus.Sizer[Elem[T]] {
 	return mus.SizerFn[Elem[T]](
@@ -69,8 +69,9 @@ func NewElemSizer[T any](valS mus.Sizer[T],
 
 // NewLinkedListMarshaller creates a new LinkedList marshaller.
 //
-// valM param defines the Elem value marshaller.
-func NewLinkedListMarshaller[T any](valM mus.Marshaller[T]) mus.Marshaller[LinkedList[T]] {
+// valM param is an Elem value marshaller.
+func NewLinkedListMarshaller[T any](
+	valM mus.Marshaller[T]) mus.Marshaller[LinkedList[T]] {
 	var (
 		mp                = com.NewPtrMap()
 		elemPtrMarshaller mus.Marshaller[*Elem[T]]
@@ -94,8 +95,9 @@ func NewLinkedListMarshaller[T any](valM mus.Marshaller[T]) mus.Marshaller[Linke
 
 // NewLinkedListUnmarshaller cretaes a new LinkedList unmarshaller.
 //
-// valU param dfines the Elem value unmarshaller.
-func NewLinkedListUnmarshaller[T any](valU mus.Unmarshaller[T]) mus.Unmarshaller[LinkedList[T]] {
+// valU param is an Elem value unmarshaller.
+func NewLinkedListUnmarshaller[T any](
+	valU mus.Unmarshaller[T]) mus.Unmarshaller[LinkedList[T]] {
 	var (
 		mp                  = com.NewReversePtrMap()
 		elemPtrUnmarshaller mus.Unmarshaller[*Elem[T]]
@@ -127,7 +129,7 @@ func NewLinkedListUnmarshaller[T any](valU mus.Unmarshaller[T]) mus.Unmarshaller
 
 // NewLinkedListSizer creates a new LinkedList sizer.
 //
-// valS param defines the Elem value sizer.
+// valS param is an Elem value sizer.
 func NewLinkedListSizer[T any](valS mus.Sizer[T]) mus.Sizer[LinkedList[T]] {
 	var (
 		mp           = com.NewPtrMap()
