@@ -8,6 +8,7 @@ serializer. It consists of the following packages (each package is one example):
   feature).
 - pm - contains three examples, two of which demonstrate how to use the `pm` 
   package to serialize graphs and linked lists.
+- unsafe - explains how the unsafe package can be used.
 - validation - shows how you can validate different data types during 
   unmarshalling.
 

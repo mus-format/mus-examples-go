@@ -10,6 +10,7 @@ require (
 	github.com/mus-format/mus-dvs-go v0.1.1
 	github.com/mus-format/mus-go v0.2.2
 	github.com/ymz-ncnk/assert v0.0.0-20230825183847-259f293c18a7
+	github.com/ymz-ncnk/mok v0.2.0
 )
 
 require golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53 // indirect
