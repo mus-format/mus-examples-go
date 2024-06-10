@@ -47,7 +47,7 @@ func main() {
 
 	fmt.Println(strs) // the output will be:
 	//
-	// [secon second]
+	// [second second]
 	//
 
 	// That's not strange, remember, with unsafe package all received strings
