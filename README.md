@@ -1,6 +1,7 @@
 # mus-examples-go
 Demonstrates several examples of using the [mus-go](https://github.com/mus-format/mus-go)
 serializer. It consists of the following packages (each package is one example):
+- unsafe - explains how the unsafe package can be used.
 - dts - demonstrates how to use [mus-dts-go](https://github.com/mus-format/mus-dts-go).
 - dvs - demonstrates how to use [mus-dvs-go](https://github.com/mus-format/mus-dvs-go).
 - rest - mus-go + data versioning + REST.
@@ -8,7 +9,6 @@ serializer. It consists of the following packages (each package is one example):
   feature).
 - pm - contains three examples, two of which demonstrate how to use the `pm` 
   package to serialize graphs and linked lists.
-- unsafe - explains how the unsafe package can be used.
 - validation - shows how you can validate different data types during 
   unmarshalling.
 
