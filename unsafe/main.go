@@ -13,7 +13,6 @@ func main() {
 		bs   = make([]byte, 10) // We make a long bs to fit all the read data.
 		strs []string           // In this slice, we will accumulate all read strings.
 		err  error
-		str  string
 	)
 
 	reader := MakeReader()
@@ -28,7 +27,7 @@ func main() {
 
 		// Here we use the same bs in each iteration. So we will receive strings
 		// that point to the same bs.
-		str, _, _ = unsafe.UnmarshalString(bs)
+		str, _, _ := unsafe.UnmarshalString(bs)
 
 		// But this is not a problem if we process the received data before the next
 		// read (which will change bs).
@@ -47,12 +46,13 @@ func main() {
 
 	fmt.Println(strs) // the output will be:
 	//
-	// [second second]
+	// [secon second]
 	//
 
 	// That's not strange, remember, with unsafe package all received strings
 	// will point to the same bs (in this example), which at the end of the for
-	// loop will equal to "second".
+	// loop will equal to "second". The first string initially had a value of
+	// "first" and a length of 5, so we see "secon" in this ouput.
 
 	// The unsafe package provides high performance but requires careful use when
 	// it comes to strings. The good news - with other types there is no such
