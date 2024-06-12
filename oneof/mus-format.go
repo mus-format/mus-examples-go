@@ -38,18 +38,18 @@ func MarshalInstructionMUS(instr Instruction, bs []byte) (n int) {
 }
 
 func UnmarshalInstructionMUS(bs []byte) (instr Instruction, n int, err error) {
-	dtm, n, err := dts.UnmarshalDTMUS(bs)
+	dtm, n, err := dts.UnmarshalDTM(bs)
 	if err != nil {
 		return
 	}
 	var n1 int
 	switch dtm {
 	case CopyDTM:
-		instr, n1, err = CopyDTS.UnmarshalDataMUS(bs[n:])
+		instr, n1, err = CopyDTS.UnmarshalData(bs[n:])
 		n += n1
 		return
 	case InsertDTM:
-		instr, n1, err = InsertDTS.UnmarshalDataMUS(bs[n:])
+		instr, n1, err = InsertDTS.UnmarshalData(bs[n:])
 		n += n1
 		return
 	default:
