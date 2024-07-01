@@ -1,0 +1,17 @@
+syntax = "proto3";
+package protobuf;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/ymz-ncnk/go-serialization-benchmarks/protobuf";
+
+// protoc --go_out=. --go_opt=paths=source_relative ./protobuf/data_v1.proto
+
+message DataV1 {
+  string Str = 1;
+	bool Bool = 2;
+	sfixed32 Int32 = 3;
+	double Float64 = 4;
+	repeated sint32 Slice = 5;
+  google.protobuf.Timestamp Time = 6;
+}
