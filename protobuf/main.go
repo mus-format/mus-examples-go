@@ -13,7 +13,7 @@ func init() {
 	assert.On = true
 }
 
-// In this example we use MUS to implement Protobuf encoding.
+// In this example we use mus-go to implement Protobuf encoding.
 func main() {
 	// We have two structures DataV1, DataV2. The last one is the same as DataV1,
 	// but with two deleted fields: Bool and Slice. For both of these structures,
@@ -37,14 +37,14 @@ func main() {
 			Time:    timestamppb.New(gofakeit.Date()),
 		}
 	)
-	// Let's marshal using Protobuf and unmarshal using MUS implementation (the
+	// Let's marshal using protobuf and unmarshal using mus-go implementation (the
 	// unmarshalled data is compared with the original at the end).
 	MarshalProtobuf_UnmarshalMUS(&dataV1)
-	// Marshal using MUS - unmarshal using Protobuf.
+	// Marshal using mus-go - unmarshal using Protobuf.
 	MarshalMUS_UnmarshalProtobuf(&dataV1)
-	// Marshal first version and unmarshal second both using MUS.
+	// Marshal first version and unmarshal second both using mus-go.
 	MarshalMUSDataV1_UnmarshalMUSDataV2(&dataV1)
-	// Marshal second version and unmarshal first one again using MUS.
+	// Marshal second version and unmarshal first one again using mus-go.
 	MarshalMUSDataV2_UnmarshalMUSDataV1(&dataV2)
 
 	// As you can see, everything works as expected.
