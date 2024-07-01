@@ -12,12 +12,12 @@ import (
 func ValidateString() {
 	var (
 		str  = "hello world 🙂"
-		size = ord.SizeString(str) // == 17, where
+		size = ord.SizeString(str, nil) // == 17, where
 		// 1 byte		- length of the string
 		// 16 bytes	- string content.
 		bs = make([]byte, size)
 	)
-	ord.MarshalString(str, bs)
+	ord.MarshalString(str, nil, bs)
 
 	// Defines a string length validator.
 	var (
@@ -32,14 +32,14 @@ func ValidateString() {
 
 	// Decodes a string, checking its length. Skips all bytes of an invalid string
 	// due to skip == true.
-	str, n, err := ord.UnmarshalValidString(maxLength, true, bs)
+	str, n, err := ord.UnmarshalValidString(nil, maxLength, true, bs)
 	assert.Equal(str, "")
 	assert.Equal(n, 17) // All string bytes was used by Unmarshal funcation.
 	assert.EqualError(err, ErrTooLongString)
 
 	// Decodes a string, checking its length. Returns a validation error
 	// immediately due to a skip == false.
-	str, n, err = ord.UnmarshalValidString(maxLength, false, bs)
+	str, n, err = ord.UnmarshalValidString(nil, maxLength, false, bs)
 	assert.Equal(str, "")
 	assert.Equal(n, 1) // Only one byte (the length of the string) was used by
 	// Unmarshal function.

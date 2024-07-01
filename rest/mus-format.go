@@ -40,7 +40,7 @@ var ErrTooLongName = errors.New("too long name")
 
 // Marshal function for the first product version.
 func MarshalProductV1MUS(product ProductV1, bs []byte) (n int) {
-	return ord.MarshalString(product.Name, bs)
+	return ord.MarshalString(product.Name, nil, bs)
 }
 
 // Unmarshal function for the first product version.
@@ -53,19 +53,19 @@ func UnmarshalProductV1MUS(bs []byte) (product ProductV1, n int, err error) {
 		}
 		return
 	}
-	product.Name, n, err = ord.UnmarshalValidString(maxLength, false, bs)
+	product.Name, n, err = ord.UnmarshalValidString(nil, maxLength, false, bs)
 	return
 }
 
 // Size function for the first product version.
 func SizeProductV1MUS(product ProductV1) (size int) {
-	return ord.SizeString(product.Name)
+	return ord.SizeString(product.Name, nil)
 }
 
 // Marshal function for the second product version.
 func MarshalProductV2MUS(product ProductV2, bs []byte) (n int) {
-	n = ord.MarshalString(product.Name, bs)
-	return n + ord.MarshalString(product.Description, bs[n:])
+	n = ord.MarshalString(product.Name, nil, bs)
+	return n + ord.MarshalString(product.Description, nil, bs[n:])
 }
 
 // Unmarshal function for the second product version.
@@ -78,18 +78,18 @@ func UnmarshalProductV2MUS(bs []byte) (product ProductV2, n int, err error) {
 		}
 		return
 	}
-	product.Name, n, err = ord.UnmarshalValidString(maxLength, false, bs)
+	product.Name, n, err = ord.UnmarshalValidString(nil, maxLength, false, bs)
 	if err != nil {
 		return
 	}
-	product.Description, _, err = ord.UnmarshalString(bs[n:])
+	product.Description, _, err = ord.UnmarshalString(nil, bs[n:])
 	return
 }
 
 // Size function for the second product version.
 func SizeProductV2MUS(product ProductV2) (size int) {
-	size += ord.SizeString(product.Name)
-	return size + ord.SizeString(product.Description)
+	size += ord.SizeString(product.Name, nil)
+	return size + ord.SizeString(product.Description, nil)
 }
 
 // -----------------------------------------------------------------------------

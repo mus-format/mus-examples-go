@@ -14,22 +14,32 @@ import (
 // unmarshalling.
 func ValidateSlice() {
 	var (
-		m mus.MarshallerFn[string] = ord.MarshalString // Marshaller for slice
-		// elements.
-		u mus.UnmarshallerFn[string] = ord.UnmarshalString // Unmarshaller for slice
-		// elements.
-		s  mus.SizerFn[string] = ord.SizeString // Sizer for slice elements.
-		sk mus.SkipperFn       = ord.SkipString // Skipper for slice element.
+		// Marshaller for slice elements.
+		m mus.MarshallerFn[string] = func(t string, bs []byte) (n int) {
+			return ord.MarshalString(t, nil, bs)
+		}
+		// Unmarshaller for slice elements.
+		u mus.UnmarshallerFn[string] = func(bs []byte) (t string, n int, err error) {
+			return ord.UnmarshalString(nil, bs)
+		}
+		// Sizer for slice elements.
+		s mus.SizerFn[string] = func(t string) (size int) {
+			return ord.SizeString(t, nil)
+		}
+		// Skipper for slice element.
+		sk mus.SkipperFn = func(bs []byte) (n int, err error) {
+			return ord.SkipString(nil, bs)
+		}
 
 		sl   = []string{"hello", "world", "🙂"}
-		size = ord.SizeSlice[string](sl, s) // == 18, where
+		size = ord.SizeSlice[string](sl, nil, s) // == 18, where
 		// 1 byte 	- length of the slice
 		// 6 bytes 	- "hello" element
 		// 6 bytes 	- "world" element
 		// 5 bytes 	- "🙂" element.
 		bs = make([]byte, size)
 	)
-	ord.MarshalSlice[string](sl, m, bs)
+	ord.MarshalSlice[string](sl, nil, m, bs)
 
 	// Defines a slice length validator.
 	var (
@@ -44,14 +54,14 @@ func ValidateSlice() {
 
 	// Decodes a slice, checking its length. Skips all bytes of an invalid slice
 	// due to sk != nil.
-	sl, n, err := ord.UnmarshalValidSlice[string](maxLength, u, nil, sk, bs)
+	sl, n, err := ord.UnmarshalValidSlice[string](nil, maxLength, u, nil, sk, bs)
 	assert.EqualDeep(sl, []string(nil))
 	assert.Equal(n, 18) // All slice bytes was used by Unmarshal funcation.
 	assert.EqualError(err, ErrTooLongSlice)
 
 	// Decodes a slice, checking its length. Returns a validation error
 	// immediately due to a sk == nil.
-	sl, n, err = ord.UnmarshalValidSlice[string](maxLength, u, nil, nil, bs)
+	sl, n, err = ord.UnmarshalValidSlice[string](nil, maxLength, u, nil, nil, bs)
 	assert.EqualDeep(sl, []string(nil))
 	assert.Equal(n, 1) // Only one byte (the length of the slice) was used by
 	// Unmarshal function.
@@ -72,14 +82,16 @@ func ValidateSlice() {
 
 	// Decodes a slice, checking its elements. Skips all bytes after invalid
 	// element due to sk != nil.
-	sl, n, err = ord.UnmarshalValidSlice[string](nil, u, elemValidator, sk, bs)
+	sl, n, err = ord.UnmarshalValidSlice[string](nil, nil, u, elemValidator, sk,
+		bs)
 	assert.EqualDeep(sl, []string{"hello", "", ""})
 	assert.Equal(n, 18) // All slice bytes was used by Unmarshal funcation.
 	assert.EqualError(err, NewInvalidElemError("world"))
 
 	// Decodes a slice, checking its elements. Returns a validation error
 	// immediately due to a sk == nil.
-	sl, n, err = ord.UnmarshalValidSlice[string](nil, u, elemValidator, nil, bs)
+	sl, n, err = ord.UnmarshalValidSlice[string](nil, nil, u, elemValidator, nil,
+		bs)
 	assert.EqualDeep(sl, []string{"hello", "", ""})
 	assert.Equal(n, 13) // Bytes of the "world" element was used by Unmarshal
 	// function too.

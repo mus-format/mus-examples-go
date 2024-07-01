@@ -96,16 +96,16 @@ func SizeCopyMUS(c Copy) (size int) {
 // Insert
 
 func MarshalInsertMUS(i Insert, bs []byte) (n int) {
-	return ord.MarshalString(i.str, bs)
+	return ord.MarshalString(i.str, nil, bs)
 }
 
 func UnmarshalInsertMUS(bs []byte) (i Insert, n int, err error) {
-	i.str, n, err = ord.UnmarshalString(bs)
+	i.str, n, err = ord.UnmarshalString(nil, bs)
 	return
 }
 
 func SizeInsertMUS(i Insert) (size int) {
-	return ord.SizeString(i.str)
+	return ord.SizeString(i.str, nil)
 }
 
 // -----------------------------------------------------------------------------

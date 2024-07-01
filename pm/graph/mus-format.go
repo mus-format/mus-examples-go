@@ -68,7 +68,7 @@ func NewVertexMarshaller[T any](valM mus.Marshaller[T],
 	return mus.MarshallerFn[Vertex[T]](
 		func(v Vertex[T], bs []byte) (n int) {
 			n = valM.MarshalMUS(v.Val, bs)
-			return n + ord.MarshalMap[int, *Edge[T]](v.Edges,
+			return n + ord.MarshalMap[int, *Edge[T]](v.Edges, nil,
 				mus.MarshallerFn[int](varint.MarshalInt),
 				*edgeM,
 				bs[n:])
@@ -89,7 +89,7 @@ func NewVertexUnmarshaller[T any](valU mus.Unmarshaller[T],
 				return
 			}
 			var n1 int
-			t.Edges, n1, err = ord.UnmarshalMap[int, *Edge[T]](
+			t.Edges, n1, err = ord.UnmarshalMap[int, *Edge[T]](nil,
 				mus.UnmarshallerFn[int](varint.UnmarshalInt), *edgeU, bs[n:])
 			n += n1
 			return
@@ -105,7 +105,7 @@ func NewVertexSizer[T any](valS mus.Sizer[T],
 	return mus.SizerFn[Vertex[T]](
 		func(v Vertex[T]) (size int) {
 			size = valS.SizeMUS(v.Val)
-			return size + ord.SizeMap[int, *Edge[T]](v.Edges,
+			return size + ord.SizeMap[int, *Edge[T]](v.Edges, nil,
 				mus.SizerFn[int](varint.SizeInt), *edgeS)
 		},
 	)
@@ -141,7 +141,7 @@ func NewGraphMarshaller[T comparable, V any](keyM mus.Marshaller[T],
 	)
 	return mus.MarshallerFn[Graph[T, V]](
 		func(g Graph[T, V], bs []byte) (n int) {
-			return ord.MarshalMap[T, *Vertex[V]](g.Vertices, keyM,
+			return ord.MarshalMap[T, *Vertex[V]](g.Vertices, nil, keyM,
 				vertexPtrMarshaller,
 				bs)
 		},
@@ -175,7 +175,7 @@ func NewGraphUnmarshaller[T comparable, V any](keyU mus.Unmarshaller[T],
 	)
 	return mus.UnmarshallerFn[Graph[T, V]](
 		func(bs []byte) (g Graph[T, V], n int, err error) {
-			g.Vertices, n, err = ord.UnmarshalMap[T, *Vertex[V]](keyU,
+			g.Vertices, n, err = ord.UnmarshalMap[T, *Vertex[V]](nil, keyU,
 				vertexPtrUnmarshaller,
 				bs)
 			return
@@ -205,7 +205,7 @@ func NewGraphSizer[T comparable, V any](keyS mus.Sizer[T],
 	)
 	return mus.SizerFn[Graph[T, V]](
 		func(g Graph[T, V]) (size int) {
-			return ord.SizeMap[T, *Vertex[V]](g.Vertices, keyS, vertexPtrSizer)
+			return ord.SizeMap[T, *Vertex[V]](g.Vertices, nil, keyS, vertexPtrSizer)
 		},
 	)
 }

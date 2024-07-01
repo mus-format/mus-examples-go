@@ -21,13 +21,13 @@ func main() {
 		if err == io.EOF {
 			break
 		}
-		// unsafe.UnmarshalString() creates a string that points to the given bs.
+		// unsafe.UnmarshalStringVarint() creates a string that points to the given bs.
 		// This means if we change bs after unmarshal, the content of the received
 		// string will also change.
 
 		// Here we use the same bs in each iteration. So we will receive strings
 		// that point to the same bs.
-		str, _, _ := unsafe.UnmarshalString(bs)
+		str, _, _ := unsafe.UnmarshalString(nil, bs)
 
 		// But this is not a problem if we process the received data before the next
 		// read (which will change bs).
@@ -70,10 +70,10 @@ func main() {
 // “second” on the second. All results are marshalled with an unsafe package.
 func MakeReader() io.Reader {
 	return NewReaderMock().RegisterRead(func(p []byte) (n int, err error) {
-		n = unsafe.MarshalString("first", p)
+		n = unsafe.MarshalString("first", nil, p)
 		return n, nil
 	}).RegisterRead(func(p []byte) (n int, err error) {
-		n = unsafe.MarshalString("second", p)
+		n = unsafe.MarshalString("second", nil, p)
 		return n, nil
 	}).RegisterRead(func(p []byte) (n int, err error) {
 		return 0, io.EOF

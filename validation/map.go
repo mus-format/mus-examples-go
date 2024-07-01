@@ -19,13 +19,25 @@ func ValidateMap() {
 		s1  mus.SizerFn[int]        = varint.SizeInt      // Sizer for map keys.
 		sk1 mus.SkipperFn           = varint.SkipInt      // Skipper for map keys.
 
-		m2  mus.MarshallerFn[string]   = ord.MarshalString   // Marshaller for map values.
-		u2  mus.UnmarshallerFn[string] = ord.UnmarshalString // Unmarshaller for map values.
-		s2  mus.SizerFn[string]        = ord.SizeString      // Sizer for map values.
-		sk2 mus.SkipperFn              = ord.SkipString      // Skipper for map values.
+		// Marshaller for map values.
+		m2 mus.MarshallerFn[string] = func(t string, bs []byte) (n int) {
+			return ord.MarshalString(t, nil, bs)
+		}
+		// Unmarshaller for map values.
+		u2 mus.UnmarshallerFn[string] = func(bs []byte) (t string, n int, err error) {
+			return ord.UnmarshalString(nil, bs)
+		}
+		// Sizer for map values.
+		s2 mus.SizerFn[string] = func(t string) (size int) {
+			return ord.SizeString(t, nil)
+		}
+		// Skipper for map values.
+		sk2 mus.SkipperFn = func(bs []byte) (n int, err error) {
+			return ord.SkipString(nil, bs)
+		}
 
 		mp   = map[int]string{1: "hello", 2: "world", 3: "🙂"}
-		size = ord.SizeMap[int, string](mp, s1, s2) // == 21, where
+		size = ord.SizeMap[int, string](mp, nil, s1, s2) // == 21, where
 		// 1 byte 	- length of the map
 		// 1 byte 	- 1 key
 		// 6 bytes 	- "hello" value
@@ -35,7 +47,7 @@ func ValidateMap() {
 		// 5 bytes  - "🙂" value
 		bs = make([]byte, size)
 	)
-	ord.MarshalMap[int, string](mp, m1, m2, bs)
+	ord.MarshalMap[int, string](mp, nil, m1, m2, bs)
 
 	// Defines a map length validator.
 	var (
@@ -50,7 +62,8 @@ func ValidateMap() {
 
 	// Decodes a map, checking its length. Skips all bytes of an invalid map
 	// due to sk != nil && sk2 != nil.
-	mp, n, err := ord.UnmarshalValidMap[int, string](maxLength, u1, u2, nil, nil,
+	mp, n, err := ord.UnmarshalValidMap[int, string](nil, maxLength, u1, u2, nil,
+		nil,
 		sk1,
 		sk2,
 		bs)
@@ -67,7 +80,8 @@ func ValidateMap() {
 
 	// Decodes a map, checking its length. Returns a validation error
 	// immediately due to a sk1 == nil || sk2 == nil.
-	mp, n, err = ord.UnmarshalValidMap[int, string](maxLength, u1, u2, nil, nil,
+	mp, n, err = ord.UnmarshalValidMap[int, string](nil, maxLength, u1, u2, nil,
+		nil,
 		nil,
 		nil,
 		bs)
@@ -94,7 +108,7 @@ func ValidateMap() {
 
 	// Decodes a map, checking its keys. Skips all bytes after an invalid key
 	// due to sk != nil && sk2 != nil.
-	mp, n, err = ord.UnmarshalValidMap[int, string](nil, u1, u2, keyValidator,
+	mp, n, err = ord.UnmarshalValidMap[int, string](nil, nil, u1, u2, keyValidator,
 		nil,
 		sk1,
 		sk2,
@@ -108,7 +122,8 @@ func ValidateMap() {
 
 	// Decodes a map, checking its keys. Returns a validation error
 	// immediately due to sk1 == nil || sk2 == nil.
-	mp, n, err = ord.UnmarshalValidMap[int, string](nil, u1, u2, keyValidator, nil,
+	mp, n, err = ord.UnmarshalValidMap[int, string](nil, nil, u1, u2, keyValidator,
+		nil,
 		nil,
 		nil,
 		bs)
@@ -134,7 +149,7 @@ func ValidateMap() {
 
 	// Decodes a map, checking its values. Skips all bytes after an invalid value
 	// due to sk != nil && sk2 != nil.
-	mp, n, err = ord.UnmarshalValidMap[int, string](nil, u1, u2, nil,
+	mp, n, err = ord.UnmarshalValidMap[int, string](nil, nil, u1, u2, nil,
 		valValidator,
 		sk1,
 		sk2,
@@ -148,7 +163,7 @@ func ValidateMap() {
 
 	// Decodes a map, checking its values. Returns a validation error
 	// immediately due to sk1 == nil || sk2 == nil.
-	mp, n, err = ord.UnmarshalValidMap[int, string](nil, u1, u2, nil,
+	mp, n, err = ord.UnmarshalValidMap[int, string](nil, nil, u1, u2, nil,
 		valValidator,
 		nil,
 		nil,

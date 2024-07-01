@@ -28,7 +28,7 @@ func ValidateStruct() {
 				return
 			}
 			var n1 int
-			n1, err = ord.SkipString(bs[n:])
+			n1, err = ord.SkipString(nil, bs[n:])
 			n += n1
 			return
 		}
@@ -66,7 +66,7 @@ type Foo struct {
 func MarshalFoo(v Foo, bs []byte) (n int) {
 	n = varint.MarshalInt(v.a, bs)
 	n += ord.MarshalBool(v.b, bs[n:])
-	return n + ord.MarshalString(v.c, bs[n:])
+	return n + ord.MarshalString(v.c, nil, bs[n:])
 }
 
 func UnmarshalValidFoo(avl com.Validator[int], ask mus.Skipper, bs []byte) (
@@ -99,7 +99,7 @@ func UnmarshalValidFoo(avl com.Validator[int], ask mus.Skipper, bs []byte) (
 	if err != nil {
 		return
 	}
-	v.c, n1, err = ord.UnmarshalString(bs[n:])
+	v.c, n1, err = ord.UnmarshalString(nil, bs[n:])
 	n += n1
 	return
 }
@@ -107,5 +107,5 @@ func UnmarshalValidFoo(avl com.Validator[int], ask mus.Skipper, bs []byte) (
 func SizeFoo(v Foo) (size int) {
 	size += varint.SizeInt(v.a)
 	size += ord.SizeBool(v.b)
-	return size + ord.SizeString(v.c)
+	return size + ord.SizeString(v.c, nil)
 }

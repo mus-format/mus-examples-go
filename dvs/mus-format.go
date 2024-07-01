@@ -41,16 +41,16 @@ func SizeFooV1MUS(foo FooV1) (size int) {
 
 // FooV2
 func MarshalFooV2MUS(foo FooV2, bs []byte) (n int) {
-	return ord.MarshalString(foo.str, bs)
+	return ord.MarshalString(foo.str, nil, bs)
 }
 
 func UnmarshalFooV2MUS(bs []byte) (foo FooV2, n int, err error) {
-	foo.str, n, err = ord.UnmarshalString(bs)
+	foo.str, n, err = ord.UnmarshalString(nil, bs)
 	return
 }
 
 func SizeFooV2MUS(foo FooV2) (size int) {
-	return ord.SizeString(foo.str)
+	return ord.SizeString(foo.str, nil)
 }
 
 // BarV1
