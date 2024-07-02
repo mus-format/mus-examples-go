@@ -65,6 +65,7 @@ var (
 // -----------------------------------------------------------------------------
 // DataV1
 // -----------------------------------------------------------------------------
+
 // Actually, there is nothing complicated here, when marshalling a field (like
 // data.Str or data.Bool) we:
 // 1. Marshal the tag.
@@ -89,10 +90,11 @@ func MarshalDataV1Protobuf(data *DataV1, bs []byte) (n int) {
 	}
 	if len(data.Slice) > 0 {
 		n += varint.MarshalUint64(sliceFieldTag, bs[n:])
+		n += varint.MarshalPositiveInt(
+			SizeSliceProtobuf[int32](data.Slice, mus.SizerFn[int32](varint.SizeInt32)), bs[n:],
+		)
 		n += MarshalSliceProtobuf[int32](data.Slice,
-			mus.MarshallerFn[int32](varint.MarshalInt32),
-			mus.SizerFn[int32](varint.SizeInt32),
-			bs[n:])
+			mus.MarshallerFn[int32](varint.MarshalInt32), bs[n:])
 	}
 	if data.Time != nil && (data.Time.Seconds != 0 || data.Time.Nanos != 0) {
 		n += varint.MarshalUint64(timeFieldTag, bs[n:])
@@ -108,10 +110,11 @@ func MarshalDataV1Protobuf(data *DataV1, bs []byte) (n int) {
 // 3. Unmarshal the value.
 func UnmarshalDataV1Protobuf(bs []byte) (data *DataV1, n int, err error) {
 	var (
-		n1  int
-		l   = len(bs)
-		tag uint64
-		sl  []int32
+		n1       int
+		l        = len(bs)
+		tag      uint64
+		slice    []int32
+		sliceLen int
 	)
 	data = &DataV1{}
 	for n < l {
@@ -130,9 +133,14 @@ func UnmarshalDataV1Protobuf(bs []byte) (data *DataV1, n int, err error) {
 		case float64FieldTag:
 			data.Float64, n1, err = unsafe.UnmarshalFloat64(bs[n:])
 		case sliceFieldTag:
-			sl, n1, err = UnmarshalSliceProtobuf[int32](
+			sliceLen, n1, err = varint.UnmarshalPositiveInt(bs[n:])
+			n += n1
+			if err != nil {
+				return
+			}
+			slice, n1, err = UnmarshalSliceProtobuf[int32](sliceLen,
 				mus.UnmarshallerFn[int32](varint.UnmarshalInt32), bs[n:])
-			data.Slice = append(data.Slice, sl...)
+			data.Slice = append(data.Slice, slice...)
 		case timeFieldTag:
 			n1, err = varint.SkipPositiveInt(bs[n:])
 			n += n1
@@ -169,9 +177,10 @@ func SizeDataV1Protobuf(data *DataV1) (size int) {
 		size += unsafe.SizeFloat64(data.Float64)
 	}
 	if len(data.Slice) > 0 {
+		sizeSlice := SizeSliceProtobuf[int32](data.Slice, mus.SizerFn[int32](varint.SizeInt32))
 		size += varint.SizeUint64(sliceFieldTag)
-		size += SizeSliceProtobuf[int32](data.Slice,
-			mus.SizerFn[int32](varint.SizeInt32))
+		size += varint.SizePositiveInt(sizeSlice)
+		size += sizeSlice
 	}
 	if data.Time != nil && (data.Time.Seconds != 0 || data.Time.Nanos != 0) {
 		sizeTimestamp := SizeTimestampProtobuf(data.Time)
@@ -185,6 +194,7 @@ func SizeDataV1Protobuf(data *DataV1) (size int) {
 // -----------------------------------------------------------------------------
 // DataV2
 // -----------------------------------------------------------------------------
+
 func MarshalDataV2Protobuf(data *DataV2, bs []byte) (n int) {
 	if data.Str != "" {
 		n += varint.MarshalUint64(strFieldTag, bs[n:])
@@ -231,7 +241,7 @@ func UnmarshalDataV2Protobuf(bs []byte) (data *DataV2, n int, err error) {
 			data.Float64, n1, err = unsafe.UnmarshalFloat64(bs[n:])
 		case sliceFieldTag:
 			// Slice field was remove in DataV2, so simply skip it here.
-			n1, err = SkipSliceProtobuf(bs[n:])
+			n1, err = SkipLenFieldProtobuf(bs[n:])
 		case timeFieldTag:
 			n1, err = varint.SkipPositiveInt(bs[n:])
 			n += n1
@@ -275,6 +285,7 @@ func SizeDataV2Protobuf(data *DataV2) (size int) {
 // -----------------------------------------------------------------------------
 // timestamppb.Timestamp
 // -----------------------------------------------------------------------------
+
 var (
 	secondsFieldTag = protowire.EncodeTag(1, protowire.VarintType)
 	nanosFieldTag   = protowire.EncodeTag(2, protowire.VarintType)
@@ -337,32 +348,26 @@ func SizeTimestampProtobuf(tm *timestamppb.Timestamp) (size int) {
 // -----------------------------------------------------------------------------
 // Slice
 // -----------------------------------------------------------------------------
-func MarshalSliceProtobuf[T any](sl []T, m mus.Marshaller[T], s mus.Sizer[T],
-	bs []byte) (n int) {
-	n = varint.MarshalPositiveInt(sliceLEN(sl, s), bs)
+
+func MarshalSliceProtobuf[T any](sl []T, m mus.Marshaller[T], bs []byte) (n int) {
 	for i := 0; i < len(sl); i++ {
 		n += m.MarshalMUS(sl[i], bs[n:])
 	}
 	return
 }
 
-func UnmarshalSliceProtobuf[T any](u mus.Unmarshaller[T], bs []byte) (sl []T,
-	n int, err error) {
+func UnmarshalSliceProtobuf[T any](length int, u mus.Unmarshaller[T],
+	bs []byte) (sl []T, n int, err error) {
 	var (
 		n1   int
 		elem T
 	)
 	sl = []T{}
-	l, n, err := varint.UnmarshalPositiveInt(bs)
-	if err != nil {
-		return
-	}
-	l = l + n
-	if len(bs) < l {
+	if len(bs) < length {
 		err = com.ErrOverflow
 		return
 	}
-	for n < l {
+	for n < length {
 		elem, n1, err = u.UnmarshalMUS(bs[n:])
 		n += n1
 		if err != nil {
@@ -374,11 +379,17 @@ func UnmarshalSliceProtobuf[T any](u mus.Unmarshaller[T], bs []byte) (sl []T,
 }
 
 func SizeSliceProtobuf[T any](sl []T, s mus.Sizer[T]) (size int) {
-	l := sliceLEN(sl, s)
-	return varint.SizePositiveInt(l) + l
+	for i := 0; i < len(sl); i++ {
+		size += s.SizeMUS(sl[i])
+	}
+	return
 }
 
-func SkipSliceProtobuf(bs []byte) (n int, err error) {
+// -----------------------------------------------------------------------------
+// General
+// -----------------------------------------------------------------------------
+
+func SkipLenFieldProtobuf(bs []byte) (n int, err error) {
 	l, n, err := varint.UnmarshalPositiveInt(bs)
 	if err != nil {
 		return
@@ -387,13 +398,6 @@ func SkipSliceProtobuf(bs []byte) (n int, err error) {
 	if len(bs) < n {
 		err = com.ErrOverflow
 		return
-	}
-	return
-}
-
-func sliceLEN[T any](sl []T, s mus.Sizer[T]) (size int) {
-	for i := 0; i < len(sl); i++ {
-		size += s.SizeMUS(sl[i])
 	}
 	return
 }
