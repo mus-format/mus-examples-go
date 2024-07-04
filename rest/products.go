@@ -23,8 +23,8 @@ type Products struct {
 // When saving a product, we must also save its version, so we use ProductDTS
 // here.
 func (products Products) Add(id uuid.UUID, product Product) {
-	bs := make([]byte, ProductDTS.SizeMUS(product))
-	ProductDTS.MarshalMUS(product, bs)
+	bs := make([]byte, ProductDTS.Size(product))
+	ProductDTS.Marshal(product, bs)
 	products.m[id] = bs
 }
 
@@ -36,6 +36,6 @@ func (products Products) Get(id uuid.UUID) (product Product, err error) {
 		err = errors.New("not found")
 		return
 	}
-	_, product, _, err = ProductDVS.UnmarshalMUS(bs)
+	_, product, _, err = ProductDVS.Unmarshal(bs)
 	return
 }

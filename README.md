@@ -11,5 +11,6 @@ serializer. It consists of the following packages (each package is one example):
   package to serialize graphs and linked lists.
 - validation - shows how you can validate different data types during 
   unmarshalling.
+- protobuf - shows how to implement Protobuf encoding using mus-go.
 
 You can find more information in the corresponding `main.go` files.

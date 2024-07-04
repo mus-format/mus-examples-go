@@ -22,7 +22,7 @@ func main() {
 			break
 		}
 		// unsafe.UnmarshalStringVarint() creates a string that points to the given bs.
-		// This means if we change bs after unmarshal, the content of the received
+		// This means if we change bs after Unmarshal, the content of the received
 		// string will also change.
 
 		// Here we use the same bs in each iteration. So we will receive strings

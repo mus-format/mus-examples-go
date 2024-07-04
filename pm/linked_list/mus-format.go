@@ -18,31 +18,31 @@ func NewElemMarshaller[T any](valM mus.Marshaller[T],
 	eleM *mus.Marshaller[*Elem[T]]) mus.Marshaller[Elem[T]] {
 	return mus.MarshallerFn[Elem[T]](
 		func(e Elem[T], bs []byte) (n int) {
-			n = valM.MarshalMUS(e.Val, bs)
-			n += (*eleM).MarshalMUS(e.prev, bs[n:])
-			return n + (*eleM).MarshalMUS(e.next, bs[n:])
+			n = valM.Marshal(e.Val, bs)
+			n += (*eleM).Marshal(e.prev, bs[n:])
+			return n + (*eleM).Marshal(e.next, bs[n:])
 		},
 	)
 }
 
-// NewElemUnmarshaller creates a new Elem unmarshaller.
+// NewElemUnmarshaller creates a new Elem Unmarshaller.
 //
-// valU param is an Elem value unmarshaller, elemU - Elem unmarshaller.
+// valU param is an Elem value Unmarshaller, elemU - Elem Unmarshaller.
 func NewElemUnmarshaller[T any](valU mus.Unmarshaller[T],
 	elemU *mus.Unmarshaller[*Elem[T]]) mus.Unmarshaller[Elem[T]] {
 	return mus.UnmarshallerFn[Elem[T]](
 		func(bs []byte) (e Elem[T], n int, err error) {
-			e.Val, n, err = valU.UnmarshalMUS(bs)
+			e.Val, n, err = valU.Unmarshal(bs)
 			if err != nil {
 				return
 			}
 			var n1 int
-			e.prev, n1, err = (*elemU).UnmarshalMUS(bs[n:])
+			e.prev, n1, err = (*elemU).Unmarshal(bs[n:])
 			n += n1
 			if err != nil {
 				return
 			}
-			e.next, n1, err = (*elemU).UnmarshalMUS(bs[n:])
+			e.next, n1, err = (*elemU).Unmarshal(bs[n:])
 			n += n1
 			return
 		},
@@ -56,9 +56,9 @@ func NewElemSizer[T any](valS mus.Sizer[T],
 	elemS *mus.Sizer[*Elem[T]]) mus.Sizer[Elem[T]] {
 	return mus.SizerFn[Elem[T]](
 		func(e Elem[T]) (size int) {
-			size = valS.SizeMUS(e.Val)
-			size += (*elemS).SizeMUS(e.prev)
-			return size + (*elemS).SizeMUS(e.next)
+			size = valS.Size(e.Val)
+			size += (*elemS).Size(e.prev)
+			return size + (*elemS).Size(e.next)
 		},
 	)
 }
@@ -86,16 +86,16 @@ func NewLinkedListMarshaller[T any](
 	)
 	return mus.MarshallerFn[LinkedList[T]](
 		func(l LinkedList[T], bs []byte) (n int) {
-			n = elemPtrMarshaller.MarshalMUS(l.head, bs)
-			n += elemPtrMarshaller.MarshalMUS(l.tail, bs[n:])
+			n = elemPtrMarshaller.Marshal(l.head, bs)
+			n += elemPtrMarshaller.Marshal(l.tail, bs[n:])
 			return n + varint.MarshalInt(l.len, bs[n:])
 		},
 	)
 }
 
-// NewLinkedListUnmarshaller cretaes a new LinkedList unmarshaller.
+// NewLinkedListUnmarshaller cretaes a new LinkedList Unmarshaller.
 //
-// valU param is an Elem value unmarshaller.
+// valU param is an Elem value Unmarshaller.
 func NewLinkedListUnmarshaller[T any](
 	valU mus.Unmarshaller[T]) mus.Unmarshaller[LinkedList[T]] {
 	var (
@@ -110,12 +110,12 @@ func NewLinkedListUnmarshaller[T any](
 	)
 	return mus.UnmarshallerFn[LinkedList[T]](
 		func(bs []byte) (l LinkedList[T], n int, err error) {
-			l.head, n, err = elemPtrUnmarshaller.UnmarshalMUS(bs)
+			l.head, n, err = elemPtrUnmarshaller.Unmarshal(bs)
 			if err != nil {
 				return
 			}
 			var n1 int
-			l.tail, n1, err = elemPtrUnmarshaller.UnmarshalMUS(bs[n:])
+			l.tail, n1, err = elemPtrUnmarshaller.Unmarshal(bs[n:])
 			n += n1
 			if err != nil {
 				return
@@ -142,8 +142,8 @@ func NewLinkedListSizer[T any](valS mus.Sizer[T]) mus.Sizer[LinkedList[T]] {
 	)
 	return mus.SizerFn[LinkedList[T]](
 		func(l LinkedList[T]) (size int) {
-			size = elemPtrSizer.SizeMUS(l.head)
-			size += elemPtrSizer.SizeMUS(l.tail)
+			size = elemPtrSizer.Size(l.head)
+			size += elemPtrSizer.Size(l.tail)
 			return size + varint.SizeInt(l.Len())
 		},
 	)

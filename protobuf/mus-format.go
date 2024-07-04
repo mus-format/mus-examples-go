@@ -99,12 +99,12 @@ func MarshalDataV1Protobuf(data *DataV1, bs []byte) (n int) {
 	if data.Time != nil && (data.Time.Seconds != 0 || data.Time.Nanos != 0) {
 		n += varint.MarshalUint64(timeFieldTag, bs[n:])
 		n += varint.MarshalPositiveInt(SizeTimestampProtobuf(data.Time), bs[n:])
-		n += MarshalTimestampNative(data.Time, bs[n:])
+		n += MarshalTimestampProtobuf(data.Time, bs[n:])
 	}
 	return
 }
 
-// Here we unmarshal fields in the loop:
+// Here we Unmarshal fields in the loop:
 // 1. Unmarshal the tag.
 // 2. Unmarshal the length of the value, if the field is a struct or slice.
 // 3. Unmarshal the value.
@@ -147,7 +147,7 @@ func UnmarshalDataV1Protobuf(bs []byte) (data *DataV1, n int, err error) {
 			if err != nil {
 				return
 			}
-			data.Time, n1, err = UnmarshalTimestampNative(bs[n:])
+			data.Time, n1, err = UnmarshalTimestampProtobuf(bs[n:])
 		default:
 			err = fmt.Errorf("unexpected tag %v", tag)
 		}
@@ -211,7 +211,7 @@ func MarshalDataV2Protobuf(data *DataV2, bs []byte) (n int) {
 	if data.Time != nil && (data.Time.Seconds != 0 || data.Time.Nanos != 0) {
 		n += varint.MarshalUint64(timeFieldTag, bs[n:])
 		n += varint.MarshalPositiveInt(SizeTimestampProtobuf(data.Time), bs[n:])
-		n += MarshalTimestampNative(data.Time, bs[n:])
+		n += MarshalTimestampProtobuf(data.Time, bs[n:])
 	}
 	return
 }
@@ -248,7 +248,7 @@ func UnmarshalDataV2Protobuf(bs []byte) (data *DataV2, n int, err error) {
 			if err != nil {
 				return
 			}
-			data.Time, n1, err = UnmarshalTimestampNative(bs[n:])
+			data.Time, n1, err = UnmarshalTimestampProtobuf(bs[n:])
 		default:
 			err = fmt.Errorf("unexpected tag %v", tag)
 		}
@@ -291,7 +291,7 @@ var (
 	nanosFieldTag   = protowire.EncodeTag(2, protowire.VarintType)
 )
 
-func MarshalTimestampNative(tm *timestamppb.Timestamp, bs []byte) (n int) {
+func MarshalTimestampProtobuf(tm *timestamppb.Timestamp, bs []byte) (n int) {
 	if tm.Seconds != 0 {
 		n += varint.MarshalUint64(secondsFieldTag, bs[n:])
 		n += varint.MarshalPositiveInt64(tm.Seconds, bs[n:])
@@ -303,7 +303,7 @@ func MarshalTimestampNative(tm *timestamppb.Timestamp, bs []byte) (n int) {
 	return
 }
 
-func UnmarshalTimestampNative(bs []byte) (tm *timestamppb.Timestamp, n int,
+func UnmarshalTimestampProtobuf(bs []byte) (tm *timestamppb.Timestamp, n int,
 	err error) {
 	var (
 		n1  int
@@ -351,7 +351,7 @@ func SizeTimestampProtobuf(tm *timestamppb.Timestamp) (size int) {
 
 func MarshalSliceProtobuf[T any](sl []T, m mus.Marshaller[T], bs []byte) (n int) {
 	for i := 0; i < len(sl); i++ {
-		n += m.MarshalMUS(sl[i], bs[n:])
+		n += m.Marshal(sl[i], bs[n:])
 	}
 	return
 }
@@ -368,7 +368,7 @@ func UnmarshalSliceProtobuf[T any](length int, u mus.Unmarshaller[T],
 		return
 	}
 	for n < length {
-		elem, n1, err = u.UnmarshalMUS(bs[n:])
+		elem, n1, err = u.Unmarshal(bs[n:])
 		n += n1
 		if err != nil {
 			return
@@ -380,7 +380,7 @@ func UnmarshalSliceProtobuf[T any](length int, u mus.Unmarshaller[T],
 
 func SizeSliceProtobuf[T any](sl []T, s mus.Sizer[T]) (size int) {
 	for i := 0; i < len(sl); i++ {
-		size += s.SizeMUS(sl[i])
+		size += s.Size(sl[i])
 	}
 	return
 }

@@ -39,7 +39,7 @@ func (h Handler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	// receive.
 	dtm := parseDTM(r)
 	// ProducDVS will migrate the product to the appropriate version.
-	bs, _, err := ProductDVS.MakeBSAndMarshalMUS(dtm, product)
+	bs, _, err := ProductDVS.MakeBSAndMarshal(dtm, product)
 	assert.EqualError(err, nil)
 
 	_, err = w.Write(bs)
@@ -57,7 +57,7 @@ func (h Handler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	//
 	// If there is an old version of the product in bs, ProductDVS migrates it to
 	// the current version.
-	_, product, _, err := ProductDVS.UnmarshalMUS(bs)
+	_, product, _, err := ProductDVS.Unmarshal(bs)
 	if err != nil {
 		sendBackUnmarshallerr(w, err)
 	}

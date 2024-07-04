@@ -29,9 +29,9 @@ const (
 func MarshalInstructionMUS(instr Instruction, bs []byte) (n int) {
 	switch in := instr.(type) {
 	case Copy:
-		return CopyDTS.MarshalMUS(in, bs)
+		return CopyDTS.Marshal(in, bs)
 	case Insert:
-		return InsertDTS.MarshalMUS(in, bs)
+		return InsertDTS.Marshal(in, bs)
 	default:
 		panic(ErrUnexpectedInstructionType)
 	}
@@ -61,9 +61,9 @@ func UnmarshalInstructionMUS(bs []byte) (instr Instruction, n int, err error) {
 func SizeInstructionMUS(instr Instruction) (size int) {
 	switch in := instr.(type) {
 	case Copy:
-		return CopyDTS.SizeMUS(in)
+		return CopyDTS.Size(in)
 	case Insert:
-		return InsertDTS.SizeMUS(in)
+		return InsertDTS.Size(in)
 	default:
 		panic(ErrUnexpectedInstructionType)
 	}

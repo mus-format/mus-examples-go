@@ -20,9 +20,9 @@ func main() {
 			mus.SizerFn[int](varint.SizeInt))
 		g = makeCyclicGraph()
 	)
-	bs := make([]byte, s.SizeMUS(g))
-	m.MarshalMUS(g, bs)
-	ag, _, err := u.UnmarshalMUS(bs)
+	bs := make([]byte, s.Size(g))
+	m.Marshal(g, bs)
+	ag, _, err := u.Unmarshal(bs)
 	assert.EqualError(err, nil)
 	assert.EqualDeep(g, ag)
 }

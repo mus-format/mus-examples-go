@@ -11,7 +11,7 @@ import (
 )
 
 // Shows how you can check the length, keys and values of a map during
-// unmarshalling.
+// Unmarshalling.
 func ValidateMap() {
 	var (
 		m1  mus.MarshallerFn[int]   = varint.MarshalInt   // Marshaller for map keys.

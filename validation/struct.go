@@ -10,7 +10,7 @@ import (
 	"github.com/ymz-ncnk/assert"
 )
 
-// Shows how you can check a struct field during unmarshalling.
+// Shows how you can check a struct field during Unmarshalling.
 func ValidateStruct() {
 	// Defines a Foo.a field validator and Foo.a field Skipper.
 	var (
@@ -84,7 +84,7 @@ func UnmarshalValidFoo(avl com.Validator[int], ask mus.Skipper, bs []byte) (
 		if err != nil {
 			if ask != nil { // If Skipper != nil, applies it, otherwise returns a
 				// validation error immediately.
-				n1, err1 = ask.SkipMUS(bs[n:])
+				n1, err1 = ask.Skip(bs[n:])
 				n += n1
 				if err1 != nil {
 					err = err1

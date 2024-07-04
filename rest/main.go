@@ -128,8 +128,8 @@ func clientCreatesInvalid(client Client) {
 // the product.
 func makeProducts(id uuid.UUID) Products {
 	product := ProductV1{Name: "old"}
-	bs := make([]byte, ProductV1DTS.SizeMUS(product))
-	ProductV1DTS.MarshalMUS(product, bs)
+	bs := make([]byte, ProductV1DTS.Size(product))
+	ProductV1DTS.Marshal(product, bs)
 	return NewProducts(map[uuid.UUID][]byte{id: bs})
 }
 

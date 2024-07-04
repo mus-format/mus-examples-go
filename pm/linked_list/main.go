@@ -17,9 +17,9 @@ func main() {
 		s = NewLinkedListSizer[int](mus.SizerFn[int](varint.SizeInt))
 		l = makeLinkedList()
 	)
-	bs := make([]byte, s.SizeMUS(l))
-	m.MarshalMUS(l, bs)
-	al, _, err := u.UnmarshalMUS(bs)
+	bs := make([]byte, s.Size(l))
+	m.Marshal(l, bs)
+	al, _, err := u.Unmarshal(bs)
 	assert.EqualError(err, nil)
 	assert.EqualDeep(l, al)
 }

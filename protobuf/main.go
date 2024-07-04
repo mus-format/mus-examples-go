@@ -37,20 +37,20 @@ func main() {
 			Time:    timestamppb.New(gofakeit.Date()),
 		}
 	)
-	// Let's marshal using protobuf and unmarshal using mus-go implementation (the
-	// unmarshalled data is compared with the original at the end).
-	MarshalProtobuf_UnmarshalMUS(&dataV1)
-	// Marshal using mus-go - unmarshal using protobuf.
-	MarshalMUS_UnmarshalProtobuf(&dataV1)
-	// Marshal first version and unmarshal second both using mus-go.
-	MarshalMUSDataV1_UnmarshalMUSDataV2(&dataV1)
-	// Marshal second version and unmarshal first one again using mus-go.
-	MarshalMUSDataV2_UnmarshalMUSDataV1(&dataV2)
+	// Let's marshal using protobuf and Unmarshal using mus-go implementation (the
+	// Unmarshalled data is compared with the original at the end).
+	MarshalProtobuf_UnmarshalMusGo(&dataV1)
+	// Marshal using mus-go - Unmarshal using protobuf.
+	MarshalMusGo_UnmarshalProtobuf(&dataV1)
+	// Marshal first version and Unmarshal second, both using mus-go.
+	MarshalDataV1_UnmarshalDataV2(&dataV1)
+	// Marshal second version and Unmarshal first one again using mus-go.
+	MarshalDataV2_UnmarshalDataV1(&dataV2)
 
 	// As you can see, everything works as expected.
 }
 
-func MarshalProtobuf_UnmarshalMUS(data *DataV1) {
+func MarshalProtobuf_UnmarshalMusGo(data *DataV1) {
 	bs, err := proto.Marshal(data)
 	assert.EqualError(err, nil)
 
@@ -60,7 +60,7 @@ func MarshalProtobuf_UnmarshalMUS(data *DataV1) {
 	assert.Equal(data.String(), adata.String())
 }
 
-func MarshalMUS_UnmarshalProtobuf(data *DataV1) {
+func MarshalMusGo_UnmarshalProtobuf(data *DataV1) {
 	bs := make([]byte, SizeDataV1Protobuf(data))
 	MarshalDataV1Protobuf(data, bs)
 
@@ -71,7 +71,7 @@ func MarshalMUS_UnmarshalProtobuf(data *DataV1) {
 	assert.Equal(data.String(), adata.String())
 }
 
-func MarshalMUSDataV1_UnmarshalMUSDataV2(dataV1 *DataV1) {
+func MarshalDataV1_UnmarshalDataV2(dataV1 *DataV1) {
 	bs := make([]byte, SizeDataV1Protobuf(dataV1))
 	MarshalDataV1Protobuf(dataV1, bs)
 
@@ -83,7 +83,7 @@ func MarshalMUSDataV1_UnmarshalMUSDataV2(dataV1 *DataV1) {
 	}
 }
 
-func MarshalMUSDataV2_UnmarshalMUSDataV1(dataV2 *DataV2) {
+func MarshalDataV2_UnmarshalDataV1(dataV2 *DataV2) {
 	bs := make([]byte, SizeDataV2Protobuf(dataV2))
 	MarshalDataV2Protobuf(dataV2, bs)
 

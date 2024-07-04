@@ -11,7 +11,7 @@ import (
 )
 
 // Shows how you can check the length and elements of a slice during
-// unmarshalling.
+// Unmarshalling.
 func ValidateSlice() {
 	var (
 		// Marshaller for slice elements.

@@ -13,7 +13,7 @@ import (
 )
 
 // Each client works with only one product version, so we use the mus-dts-go
-// module (which helps us to marshal/unmarshal specific product version) on the
+// module (which helps us to marshal/Unmarshal specific product version) on the
 // client side.
 
 // -----------------------------------------------------------------------------
@@ -32,8 +32,8 @@ func (c Client) CreateProduct(id uuid.UUID, product Product) (err error) {
 	// ProductDTS encodes product DTM (which also indicates the version of the
 	// product) and product itself to the bs. This allows the server to know which
 	// version of the product it is dealing with.
-	bs := make([]byte, ProductDTS.SizeMUS(product))
-	ProductDTS.MarshalMUS(product, bs)
+	bs := make([]byte, ProductDTS.Size(product))
+	ProductDTS.Marshal(product, bs)
 	return doPUT(id, bs, c.client)
 }
 
@@ -46,7 +46,7 @@ func (c Client) GetProduct(id uuid.UUID) (product Product, err error) {
 	}
 	// bs here will also contain the product DTM and the product itself, so we
 	// should use ProductDTS.
-	product, _, err = ProductDTS.UnmarshalMUS(bs)
+	product, _, err = ProductDTS.Unmarshal(bs)
 	return
 }
 
@@ -63,8 +63,8 @@ type OldClient struct {
 }
 
 func (c OldClient) CreateProduct(id uuid.UUID, product ProductV1) (err error) {
-	bs := make([]byte, ProductV1DTS.SizeMUS(product))
-	ProductV1DTS.MarshalMUS(product, bs)
+	bs := make([]byte, ProductV1DTS.Size(product))
+	ProductV1DTS.Marshal(product, bs)
 	return doPUT(id, bs, c.client)
 }
 
@@ -73,7 +73,7 @@ func (c OldClient) GetProduct(id uuid.UUID) (product ProductV1, err error) {
 	if err != nil {
 		return
 	}
-	product, _, err = ProductV1DTS.UnmarshalMUS(bs)
+	product, _, err = ProductV1DTS.Unmarshal(bs)
 	return
 }
 

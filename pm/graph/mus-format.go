@@ -20,14 +20,14 @@ func NewEdgeMarshaller[T any](
 	return mus.MarshallerFn[Edge[T]](
 		func(e Edge[T], bs []byte) (n int) {
 			n = varint.MarshalInt(e.Weight, bs)
-			return n + (*vertexM).MarshalMUS(e.Vertex, bs[n:])
+			return n + (*vertexM).Marshal(e.Vertex, bs[n:])
 		},
 	)
 }
 
-// NewEdgeUnmarshaller cretes a new Edge unmarshaller.
+// NewEdgeUnmarshaller cretes a new Edge Unmarshaller.
 //
-// vertexU param is a Vertex unmarshaller.
+// vertexU param is a Vertex Unmarshaller.
 func NewEdgeUnmarshaller[T any](
 	vertexU *mus.Unmarshaller[*Vertex[T]]) mus.Unmarshaller[Edge[T]] {
 	return mus.UnmarshallerFn[Edge[T]](
@@ -37,7 +37,7 @@ func NewEdgeUnmarshaller[T any](
 				return
 			}
 			var n1 int
-			e.Vertex, n1, err = (*vertexU).UnmarshalMUS(bs[n:])
+			e.Vertex, n1, err = (*vertexU).Unmarshal(bs[n:])
 			n += n1
 			return
 		},
@@ -51,7 +51,7 @@ func NewEdgeSizer[T any](vertexS *mus.Sizer[*Vertex[T]]) mus.Sizer[Edge[T]] {
 	return mus.SizerFn[Edge[T]](
 		func(e Edge[T]) (size int) {
 			size = varint.SizeInt(e.Weight)
-			return size + (*vertexS).SizeMUS(e.Vertex)
+			return size + (*vertexS).Size(e.Vertex)
 		},
 	)
 }
@@ -67,7 +67,7 @@ func NewVertexMarshaller[T any](valM mus.Marshaller[T],
 	edgeM *mus.Marshaller[*Edge[T]]) mus.Marshaller[Vertex[T]] {
 	return mus.MarshallerFn[Vertex[T]](
 		func(v Vertex[T], bs []byte) (n int) {
-			n = valM.MarshalMUS(v.Val, bs)
+			n = valM.Marshal(v.Val, bs)
 			return n + ord.MarshalMap[int, *Edge[T]](v.Edges, nil,
 				mus.MarshallerFn[int](varint.MarshalInt),
 				*edgeM,
@@ -76,14 +76,14 @@ func NewVertexMarshaller[T any](valM mus.Marshaller[T],
 	)
 }
 
-// NewVertexUnmarshaller creates a new Vertex unmarshaller.
+// NewVertexUnmarshaller creates a new Vertex Unmarshaller.
 //
-// valU param is a Vertex value unmarshaller, edgeU - Edge unmarshaller.
+// valU param is a Vertex value Unmarshaller, edgeU - Edge Unmarshaller.
 func NewVertexUnmarshaller[T any](valU mus.Unmarshaller[T],
 	edgeU *mus.Unmarshaller[*Edge[T]]) mus.Unmarshaller[Vertex[T]] {
 	return mus.UnmarshallerFn[Vertex[T]](
 		func(bs []byte) (t Vertex[T], n int, err error) {
-			t.Val, n, err = valU.UnmarshalMUS(bs)
+			t.Val, n, err = valU.Unmarshal(bs)
 			// t.Val, n, err = varint.UnmarshalInt(bs)
 			if err != nil {
 				return
@@ -104,7 +104,7 @@ func NewVertexSizer[T any](valS mus.Sizer[T],
 	edgeS *mus.Sizer[*Edge[T]]) mus.Sizer[Vertex[T]] {
 	return mus.SizerFn[Vertex[T]](
 		func(v Vertex[T]) (size int) {
-			size = valS.SizeMUS(v.Val)
+			size = valS.Size(v.Val)
 			return size + ord.SizeMap[int, *Edge[T]](v.Edges, nil,
 				mus.SizerFn[int](varint.SizeInt), *edgeS)
 		},
@@ -148,9 +148,9 @@ func NewGraphMarshaller[T comparable, V any](keyM mus.Marshaller[T],
 	)
 }
 
-// NewGraphUnmarshaller creates a new Graph unmarshaller.
+// NewGraphUnmarshaller creates a new Graph Unmarshaller.
 //
-// keyU param is a Vertex key unmarshaller, valU - Vertex value unmarshaller.
+// keyU param is a Vertex key Unmarshaller, valU - Vertex value Unmarshaller.
 func NewGraphUnmarshaller[T comparable, V any](keyU mus.Unmarshaller[T],
 	valU mus.Unmarshaller[V]) mus.Unmarshaller[Graph[T, V]] {
 	var (
