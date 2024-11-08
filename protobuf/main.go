@@ -38,7 +38,7 @@ func main() {
 		}
 	)
 	// Let's marshal using protobuf and Unmarshal using mus-go implementation (the
-	// Unmarshalled data is compared with the original at the end).
+	// unmarshalled data is compared with the original at the end).
 	MarshalProtobuf_UnmarshalMusGo(&dataV1)
 	// Marshal using mus-go - Unmarshal using protobuf.
 	MarshalMusGo_UnmarshalProtobuf(&dataV1)

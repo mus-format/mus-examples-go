@@ -30,11 +30,7 @@ import (
 //   Time    Timestamp
 // }
 //
-// The content of this file should be generated and devided to:
-// - data_v1.pb.mus.go
-// - data_v2.pb.mus.go
-// - timestamp.pb.mus.go
-// - slice.pb.mus.go
+// The content of this file should be generated.
 
 // Protobuf tags of the DataV1 and DataV2 types.
 var (
