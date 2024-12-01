@@ -1,20 +1,8 @@
 package main
 
 import (
-	com "github.com/mus-format/common-go"
-	dts "github.com/mus-format/mus-dts-go"
-	"github.com/mus-format/mus-go"
 	"github.com/mus-format/mus-go/ord"
 	"github.com/mus-format/mus-go/varint"
-)
-
-// -----------------------------------------------------------------------------
-// DTMs (Data Type Metadata).
-// -----------------------------------------------------------------------------
-
-const (
-	FooDTM com.DTM = iota + 1
-	BarDTM
 )
 
 // -----------------------------------------------------------------------------
@@ -48,20 +36,3 @@ func SizeBarMUS(bar Bar) (size int) {
 func SkipBarMUS(bs []byte) (n int, err error) {
 	return ord.SkipString(nil, bs)
 }
-
-// -----------------------------------------------------------------------------
-// DTSs (Data Type Metadata Support).
-// -----------------------------------------------------------------------------
-
-var FooDTS = dts.New[Foo](FooDTM,
-	mus.MarshallerFn[Foo](MarshalFooMUS),
-	mus.UnmarshallerFn[Foo](UnmarshalFooMUS),
-	mus.SizerFn[Foo](SizeFooMUS),
-	mus.SkipperFn(SkipFooMUS),
-)
-var BarDTS = dts.New[Bar](BarDTM,
-	mus.MarshallerFn[Bar](MarshalBarMUS),
-	mus.UnmarshallerFn[Bar](UnmarshalBarMUS),
-	mus.SizerFn[Bar](SizeBarMUS),
-	mus.SkipperFn(SkipBarMUS),
-)

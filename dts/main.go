@@ -8,7 +8,7 @@ import (
 	dts "github.com/mus-format/mus-dts-go"
 )
 
-// This example demonstrates how to use mus-dts-go.
+// This example demonstrates how mus-dts-go can be used.
 func main() {
 	// Let's make a random data
 	bs := randomData()

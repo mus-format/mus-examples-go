@@ -93,6 +93,17 @@ func SizeCopyMUS(c Copy) (size int) {
 	return size + varint.SizeInt(c.end)
 }
 
+func SkipCopyMUS(bs []byte) (n int, err error) {
+	n, err = varint.SkipInt(bs)
+	if err != nil {
+		return
+	}
+	var n1 int
+	n1, err = varint.SkipInt(bs[n:])
+	n += n1
+	return
+}
+
 // Insert
 
 func MarshalInsertMUS(i Insert, bs []byte) (n int) {
@@ -108,6 +119,10 @@ func SizeInsertMUS(i Insert) (size int) {
 	return ord.SizeString(i.str, nil)
 }
 
+func SkipInsertMUS(bs []byte) (n int, err error) {
+	return ord.SkipString(nil, bs)
+}
+
 // -----------------------------------------------------------------------------
 // DTS
 // -----------------------------------------------------------------------------
@@ -116,9 +131,13 @@ var (
 	CopyDTS = dts.New[Copy](CopyDTM,
 		mus.MarshallerFn[Copy](MarshalCopyMUS),
 		mus.UnmarshallerFn[Copy](UnmarshalCopyMUS),
-		mus.SizerFn[Copy](SizeCopyMUS))
+		mus.SizerFn[Copy](SizeCopyMUS),
+		mus.SkipperFn(SkipCopyMUS),
+	)
 	InsertDTS = dts.New[Insert](InsertDTM,
 		mus.MarshallerFn[Insert](MarshalInsertMUS),
 		mus.UnmarshallerFn[Insert](UnmarshalInsertMUS),
-		mus.SizerFn[Insert](SizeInsertMUS))
+		mus.SizerFn[Insert](SizeInsertMUS),
+		mus.SkipperFn(SkipInsertMUS),
+	)
 )

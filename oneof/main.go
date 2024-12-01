@@ -8,7 +8,7 @@ func init() {
 	assert.On = true
 }
 
-// Shows how you can Marshal/Unmarshal interface (or demonstrates oneof feature).
+// Shows how to Marshal/Unmarshal interface.
 func main() {
 	var (
 		bs    []byte

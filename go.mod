@@ -4,11 +4,8 @@ go 1.20
 
 require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
-	github.com/google/uuid v1.3.0
-	github.com/gorilla/mux v1.8.0
 	github.com/mus-format/common-go v0.0.0-20240704141923-ea7d12c7eed3
-	github.com/mus-format/mus-dts-go v0.4.0
-	github.com/mus-format/mus-dvs-go v0.4.0
+	github.com/mus-format/mus-dts-go v0.5.0
 	github.com/mus-format/mus-go v0.4.1
 	github.com/ymz-ncnk/assert v0.0.0-20230825183847-259f293c18a7
 	github.com/ymz-ncnk/mok v0.2.0
