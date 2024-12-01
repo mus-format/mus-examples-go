@@ -54,7 +54,6 @@ func SkipFooMUS(bs []byte) (n int, err error) {
 	default:
 		panic(fmt.Sprintf("unexpected %v DTM", dtm))
 	}
-	return
 }
 
 func migrateFooV1(f FooV1) Foo {
