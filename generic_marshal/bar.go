@@ -1,7 +1,6 @@
 package main
 
-// Implements MarshallerMUS interface. Could implement it with DTS instead own
-// Marshal/Size functions.
+// Implements MarshallerMUS interface.
 type Bar struct {
 	str string
 }

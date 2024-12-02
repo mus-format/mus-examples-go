@@ -27,14 +27,10 @@ const (
 // Marshal/Unmarshal/Size functions for the Instruction interface.
 
 func MarshalInstructionMUS(instr Instruction, bs []byte) (n int) {
-	switch in := instr.(type) {
-	case Copy:
-		return CopyDTS.Marshal(in, bs)
-	case Insert:
-		return InsertDTS.Marshal(in, bs)
-	default:
-		panic(ErrUnexpectedInstructionType)
+	if m, ok := instr.(MarshallerMUS); ok {
+		return m.MarshalMUS(bs)
 	}
+	panic("instr doesn't implement MarshallerMUS interface")
 }
 
 func UnmarshalInstructionMUS(bs []byte) (instr Instruction, n int, err error) {
@@ -59,14 +55,10 @@ func UnmarshalInstructionMUS(bs []byte) (instr Instruction, n int, err error) {
 }
 
 func SizeInstructionMUS(instr Instruction) (size int) {
-	switch in := instr.(type) {
-	case Copy:
-		return CopyDTS.Size(in)
-	case Insert:
-		return InsertDTS.Size(in)
-	default:
-		panic(ErrUnexpectedInstructionType)
+	if s, ok := instr.(MarshallerMUS); ok {
+		return s.SizeMUS()
 	}
+	panic("instr doesn't implement MarshallerMUS interface")
 }
 
 // Copy

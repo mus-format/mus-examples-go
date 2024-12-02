@@ -2,11 +2,6 @@ package main
 
 import "fmt"
 
-type MarshallerMUS interface {
-	MarshalMUS(bs []byte) (n int)
-	SizeMUS() (size int)
-}
-
 // Generic marshal function.
 func MarshalMUS[T MarshallerMUS](t T) (bs []byte) {
 	bs = make([]byte, t.SizeMUS())
