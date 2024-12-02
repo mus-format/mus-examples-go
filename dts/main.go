@@ -8,7 +8,8 @@ import (
 	dts "github.com/mus-format/mus-dts-go"
 )
 
-// This example demonstrates how mus-dts-go can be used.
+// This example demonstrates how mus-dts-go can be used. Also, take a look at
+// the generic_marshal example.
 func main() {
 	// Let's make a random data
 	bs := randomData()
