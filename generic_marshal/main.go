@@ -2,13 +2,13 @@ package main
 
 import "fmt"
 
-type MarshallerMUS[T any] interface {
+type MarshallerMUS interface {
 	MarshalMUS(bs []byte) (n int)
 	SizeMUS() (size int)
 }
 
 // Generic marshal function.
-func MarshalMUS[T MarshallerMUS[T]](t T) (bs []byte) {
+func MarshalMUS[T MarshallerMUS](t T) (bs []byte) {
 	bs = make([]byte, t.SizeMUS())
 	t.MarshalMUS(bs)
 	return
@@ -25,7 +25,7 @@ func main() {
 	fn(bar) // ... and with Bar.
 }
 
-func fn[T MarshallerMUS[T]](t T) {
+func fn[T MarshallerMUS](t T) {
 	bs := MarshalMUS(t)
 	fmt.Println(bs)
 }
