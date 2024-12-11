@@ -7,52 +7,55 @@ import (
 	"github.com/mus-format/mus-go/unsafe"
 )
 
-// In this example, we read and process several strings.
+// In this example, several strings are read with the unsafe package.
 func main() {
 	var (
-		bs   = make([]byte, 10) // We make a long bs to fit all the read data.
-		strs []string           // In this slice, we will accumulate all read strings.
+		bs   = make([]byte, 10) // Long enough bs to store all read data.
+		strs []string           // This slice will accumulate strings.
 		err  error
 	)
 
 	reader := MakeReader()
+	// Read and process several strings.
 	for {
 		_, err = reader.Read(bs)
 		if err == io.EOF {
 			break
 		}
-		// unsafe.UnmarshalStringVarint() creates a string that points to the given bs.
-		// This means if we change bs after Unmarshal, the content of the received
-		// string will also change.
+		// unsafe.UnmarshalString() creates a string that points to the given bs.
+		// This means that if bs changes later, the string's content will also
+		// change.
 
-		// Here we use the same bs in each iteration. So we will receive strings
-		// that point to the same bs.
+		// The same bs is used in each iteration, so all received strings are
+		// point to it.
 		str, _, _ := unsafe.UnmarshalString(nil, bs)
 
-		// But this is not a problem if we process the received data before the next
-		// read (which will change bs).
-
-		fmt.Println(str) // Here, instead of fmt.Println(), we can, for example,
-		// save the data to disk or send it over the network. In this case
-		// everything is ok and the output will be:
+		// This is not a problem if each received string is processed before the
+		// next read (which changes bs).
+		fmt.Println(str) // Instead of fmt.Println(), str can be saved to the disk
+		// or sent over the network.
+		//
+		// The output will be:
 		//
 		// first
 		// second
 		//
 
-		strs = append(strs, str) // But if we want to accumulate received strings,
-		// we should use ord package instead, because in this case ...
+		// But if we want to accumulate received strings, the ord package should be
+		// used instead, because in this case ...
+		strs = append(strs, str)
 	}
 
-	fmt.Println(strs) // the output will be:
+	fmt.Println(strs)
+	// ... the output will be:
 	//
 	// [secon second]
 	//
 
-	// That's not strange, remember, with unsafe package all received strings
-	// will point to the same bs (in this example), which at the end of the for
-	// loop will equal to "second". The first string initially had a value of
-	// "first" and a length of 5, so we see "secon" in this ouput.
+	// That's not strange, with unsafe package all received strings will point to
+	// the same bs, which at the end of the for loop equals to "second". The first
+	// string initially had a value of "first" and a length of 5, so we see
+	// "secon" in the ouput.
 
 	// The unsafe package provides high performance but requires careful use when
 	// it comes to strings. The good news - with other types there is no such
