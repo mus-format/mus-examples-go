@@ -4,18 +4,16 @@ import (
 	"github.com/ymz-ncnk/assert"
 )
 
-// Demonstrates data versioning.
+// Demonstrates data versioning. There are two versions of Foo: FooV1 and FooV2
+// (current).
 func main() {
-	// Here we have two versions of Foo: FooV1 and FooV2 (current).
+	// Marshal old V1 version using DTS.
 	fooV1 := FooV1{num: 10}
-
-	// Let's marshal old V1 version using DTS.
-	bs := make([]byte, FooV1DTS.Size(fooV1))
+	bs := make([]byte, FooV1DTS.Size(fooV1)) // Such bs, can be received from a
+	// legacy client, for example.
 	FooV1DTS.Marshal(fooV1, bs)
 
-	// Such bs, can be received from a legacy client, for example.
-
-	// Now we can unmarshal it to the currect version.
+	// Unmarshal the current version from the bs.
 	foo, _, err := UnmarshalFooMUS(bs) // UnmarshalFooMUS will migrate an
 	// old version to the current.
 	assert.EqualError(err, nil)

@@ -23,9 +23,6 @@ const (
 
 // Instruction interface
 
-// With help of the type switch and regular switch we can implement
-// Marshal/Unmarshal/Size functions for the Instruction interface.
-
 func MarshalInstructionMUS(instr Instruction, bs []byte) (n int) {
 	if m, ok := instr.(MarshallerMUS); ok {
 		return m.MarshalMUS(bs)

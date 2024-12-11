@@ -9,7 +9,7 @@ import (
 )
 
 // -----------------------------------------------------------------------------
-// DTMs (Data Type Metadata).
+// DTM (Data Type Metadata).
 // -----------------------------------------------------------------------------
 
 const (
@@ -18,7 +18,7 @@ const (
 )
 
 // -----------------------------------------------------------------------------
-// Marshal/Unmarshal/Size functions.
+// Marshal/Unmarshal/Size/Skip functions.
 // -----------------------------------------------------------------------------
 
 func MarshalFooMUS(foo Foo, bs []byte) (n int) {
@@ -50,7 +50,7 @@ func SkipBarMUS(bs []byte) (n int, err error) {
 }
 
 // -----------------------------------------------------------------------------
-// DTSs (Data Type Metadata Support).
+// DTS (Data Type Metadata Support).
 // -----------------------------------------------------------------------------
 
 var FooDTS = dts.New[Foo](FooDTM,

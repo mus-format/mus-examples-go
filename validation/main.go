@@ -6,7 +6,7 @@ func init() {
 	assert.On = true
 }
 
-// Shows how you can validate different data types during Unmarshalling. Check
+// Shows how you can validate different data types during unmarshalling. Check
 // out the functions to get more information.
 func main() {
 	ValidateString()

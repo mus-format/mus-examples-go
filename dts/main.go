@@ -8,18 +8,17 @@ import (
 	dts "github.com/mus-format/mus-dts-go"
 )
 
-// This example demonstrates how mus-dts-go can be used. Also, take a look at
-// the generic_marshal example.
+// This example shows how mus-dts-go can be used.
 func main() {
-	// Let's make a random data
+	// Make a random data and Unmarshal DTM.
 	bs := randomData()
-	// and Unmarshal DTM.
 	dtm, n, err := dts.UnmarshalDTM(bs)
 	if err != nil {
 		panic(err)
 	}
-	// Now we can deserialize and process data depending on the DTM, which in
-	// general allows us to receive data of different types.
+
+	// Deserialize and process data depending on the DTM, which in general allows
+	// to receive data of different types.
 	switch dtm {
 	case FooDTM:
 		foo, _, err := FooDTS.UnmarshalData(bs[n:])

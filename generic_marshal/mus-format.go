@@ -6,7 +6,7 @@ import (
 )
 
 // -----------------------------------------------------------------------------
-// Marshal/Unmarshal/Size functions.
+// Marshal/Unmarshal/Size/Skip functions.
 // -----------------------------------------------------------------------------
 
 func MarshalFooMUS(foo Foo, bs []byte) (n int) {

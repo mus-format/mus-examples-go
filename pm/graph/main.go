@@ -10,6 +10,7 @@ func init() {
 	assert.On = true
 }
 
+// Demonstrates how to use the pm package to serialize a cyclic graph.
 func main() {
 	var (
 		m = NewGraphMarshaller[int, int](mus.MarshallerFn[int](varint.MarshalInt),
@@ -18,10 +19,14 @@ func main() {
 			mus.UnmarshallerFn[int](varint.UnmarshalInt))
 		s = NewGraphSizer[int, int](mus.SizerFn[int](varint.SizeInt),
 			mus.SizerFn[int](varint.SizeInt))
-		g = makeCyclicGraph()
 	)
+	g := makeCyclicGraph()
+
+	// Marshal graph.
 	bs := make([]byte, s.Size(g))
 	m.Marshal(g, bs)
+
+	// Unmarshal graph.
 	ag, _, err := u.Unmarshal(bs)
 	assert.EqualError(err, nil)
 	assert.EqualDeep(g, ag)

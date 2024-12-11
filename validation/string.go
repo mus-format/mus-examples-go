@@ -8,7 +8,7 @@ import (
 	"github.com/ymz-ncnk/assert"
 )
 
-// Shows how you can check the length of a string during Unmarshalling.
+// Shows how you can check the length of a string during unmarshalling.
 func ValidateString() {
 	var (
 		str  = "hello world 🙂"

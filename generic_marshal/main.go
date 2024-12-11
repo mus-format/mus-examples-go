@@ -9,18 +9,13 @@ func MarshalMUS[T MarshallerMUS](t T) (bs []byte) {
 	return
 }
 
-// Demonstrates how to implement generic marshal function.
+// Demonstrates how to implement the generic marshal function.
 func main() {
 	// Both Foo and Bar types implement MarshallerMUS interface.
 
-	foo := Foo{num: 10}
-	fn(foo) // Can be used with Foo ...
+	bs := MarshalMUS(Foo{num: 10}) // Can be used with Foo ...
+	fmt.Println(bs)
 
-	bar := Bar{str: "10"}
-	fn(bar) // ... and with Bar.
-}
-
-func fn[T MarshallerMUS](t T) {
-	bs := MarshalMUS(t)
+	bs = MarshalMUS(Bar{str: "10"}) // ... and with Bar.
 	fmt.Println(bs)
 }

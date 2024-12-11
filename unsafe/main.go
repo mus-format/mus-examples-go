@@ -7,7 +7,7 @@ import (
 	"github.com/mus-format/mus-go/unsafe"
 )
 
-// In this example, several strings are read with the unsafe package.
+// In this example, several strings are unmarshalled with the unsafe package.
 func main() {
 	var (
 		bs   = make([]byte, 10) // Long enough bs to store all read data.
@@ -30,10 +30,10 @@ func main() {
 		// point to it.
 		str, _, _ := unsafe.UnmarshalString(nil, bs)
 
-		// This is not a problem if each received string is processed before the
-		// next read (which changes bs).
-		fmt.Println(str) // Instead of fmt.Println(), str can be saved to the disk
-		// or sent over the network.
+		// This is not a problem if each string is processed before the next read
+		// (which changes bs).
+		fmt.Println(str) // Instead of using fmt.Println(), str, for example, can be
+		// saved to the disk or sent over the network.
 		//
 		// The output will be:
 		//

@@ -13,14 +13,10 @@ func init() {
 	assert.On = true
 }
 
-// In this example we use mus-go to implement Protobuf encoding.
+// In this example, Protobuf encoding is implemented using mus-go. There are two
+// structures DataV1, DataV2. The last one is the same as DataV1, but with two
+// deleted fields: Bool and Slice.
 func main() {
-	// We have two structures DataV1, DataV2. The last one is the same as DataV1,
-	// but with two deleted fields: Bool and Slice. For both of these structures,
-	// we:
-	// - generate ...pb.go files using protoc.
-	// - write mus-format.go (actually, this code could be generated, but there is
-	//   no such generator yet).
 	var (
 		dataV1 = DataV1{
 			Str:     gofakeit.UUID(),
@@ -37,14 +33,14 @@ func main() {
 			Time:    timestamppb.New(gofakeit.Date()),
 		}
 	)
-	// Let's marshal using protobuf and Unmarshal using mus-go implementation (the
-	// unmarshalled data is compared with the original at the end).
+	// Marshal using protobuf and unmarshal using mus-go implementation (at
+	// the end the unmarshalled data is compared with the original).
 	MarshalProtobuf_UnmarshalMusGo(&dataV1)
-	// Marshal using mus-go - Unmarshal using protobuf.
+	// Marshal using mus-go - unmarshal using protobuf.
 	MarshalMusGo_UnmarshalProtobuf(&dataV1)
-	// Marshal first version and Unmarshal second, both using mus-go.
+	// Marshal first version and unmarshal second, both using mus-go.
 	MarshalDataV1_UnmarshalDataV2(&dataV1)
-	// Marshal second version and Unmarshal first one again using mus-go.
+	// Marshal second version and unmarshal first one again using mus-go.
 	MarshalDataV2_UnmarshalDataV1(&dataV2)
 
 	// As you can see, everything works as expected.

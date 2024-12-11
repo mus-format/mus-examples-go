@@ -9,7 +9,7 @@ import (
 )
 
 // -----------------------------------------------------------------------------
-// DTMs (Data Type Metadata).
+// DTM (Data Type Metadata).
 // -----------------------------------------------------------------------------
 
 const (
@@ -18,8 +18,10 @@ const (
 )
 
 // -----------------------------------------------------------------------------
-// Marshal/Unmarshal/Size functions.
+// Marshal/Unmarshal/Size/Skip functions.
 // -----------------------------------------------------------------------------
+
+// FooV1
 
 func MarshalFooV1MUS(foo FooV1, bs []byte) (n int) {
 	return varint.MarshalInt(foo.num, bs)
@@ -34,6 +36,8 @@ func SizeFooV1MUS(foo FooV1) (size int) {
 func SkipFooV1MUS(bs []byte) (n int, err error) {
 	return varint.SkipInt(bs)
 }
+
+// FooV2
 
 func MarshalFooV2MUS(foo FooV2, bs []byte) (n int) {
 	return ord.MarshalString(foo.str, nil, bs)
@@ -50,7 +54,7 @@ func SkipFooV2MUS(bs []byte) (n int, err error) {
 }
 
 // -----------------------------------------------------------------------------
-// DTSs (Data Type Metadata Support).
+// DTS (Data Type Metadata Support).
 // -----------------------------------------------------------------------------
 
 var FooV1DTS = dts.New[FooV1](FooV1DTM,
