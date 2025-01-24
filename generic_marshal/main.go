@@ -3,9 +3,9 @@ package main
 import "fmt"
 
 // Generic marshal function.
-func MarshalMUS[T MarshallerMUS](t T) (bs []byte) {
-	bs = make([]byte, t.SizeMUS())
-	t.MarshalMUS(bs)
+func MarshalMUS(v MarshallerMUS) (bs []byte) {
+	bs = make([]byte, v.SizeMUS())
+	v.MarshalMUS(bs)
 	return
 }
 
