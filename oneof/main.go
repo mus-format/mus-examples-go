@@ -1,39 +1,39 @@
 package main
 
 import (
-	"github.com/ymz-ncnk/assert"
+	assert "github.com/ymz-ncnk/assert/panic"
 )
 
 func init() {
 	assert.On = true
 }
 
-// Shows how to implement the oneof feature. There is an Instruction interface,
-// its Copy and Insert implementations.
+// This example demonstrates how to implement the "oneof" feature. It includes
+// an Instruction interface with its Copy and Insert implementations.
 func main() {
 	var (
-		bs    []byte
-		instr Instruction // Interface.
-		err   error
+		bs  []byte
+		in  Instruction // Interface.
+		err error
 	)
 
 	// Marshal Copy instruction.
 	copy := Copy{start: 10, end: 20}
-	bs = make([]byte, SizeInstructionMUS(copy))
-	MarshalInstructionMUS(copy, bs)
+	bs = make([]byte, InstructionSer.Size(copy))
+	InstructionSer.Marshal(copy, bs)
 
 	// Unmarshal Copy instruction.
-	instr, _, err = UnmarshalInstructionMUS(bs)
+	in, _, err = InstructionSer.Unmarshal(bs)
 	assert.EqualError(err, nil)
-	assert.EqualDeep(instr, copy)
+	assert.EqualDeep(in, copy)
 
 	// Marshal Insert instruction.
 	insert := Insert{str: "hello world"}
-	bs = make([]byte, SizeInstructionMUS(insert))
-	MarshalInstructionMUS(insert, bs)
+	bs = make([]byte, InstructionSer.Size(insert))
+	InstructionSer.Marshal(insert, bs)
 
 	// Unmarshal Insert instruction.
-	instr, _, err = UnmarshalInstructionMUS(bs)
+	in, _, err = InstructionSer.Unmarshal(bs)
 	assert.EqualError(err, nil)
-	assert.EqualDeep(instr, insert)
+	assert.EqualDeep(in, insert)
 }

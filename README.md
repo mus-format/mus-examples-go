@@ -7,8 +7,9 @@ serializer (each package is one example):
   can be used.
 - versioning - demonstrates data versioning.
 - generic_marshal - demonstrates how to implement generic marshal function.
-- oneof - shows how to Marshal/Unmarshal interface.
-- pm - demonstrates how to use the `pm` package to serialize a cyclic graph and
-  linked list.
+- oneof - shows how to serialize an interface.
+- pm - demonstrates how to use the `pm` package to serialize a graph or linked 
+  list.
+- out_or_order - shows how to deserialize values out of order.
 
 More information can be found in the corresponding `main.go` files.

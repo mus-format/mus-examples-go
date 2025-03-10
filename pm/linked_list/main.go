@@ -1,35 +1,33 @@
 package main
 
 import (
-	"github.com/mus-format/mus-go"
 	"github.com/mus-format/mus-go/varint"
-	"github.com/ymz-ncnk/assert"
+	assert "github.com/ymz-ncnk/assert/panic"
 )
 
 func init() {
 	assert.On = true
 }
 
-// Demonstrates how to use the pm package to serialize a linked list.
+// This example demonstrates how to use the pm package to serialize a linked
+// list.
 func main() {
 	var (
-		m = NewLinkedListMarshaller[int](mus.MarshallerFn[int](varint.MarshalInt))
-		u = NewLinkedListUnmarshaller[int](mus.UnmarshallerFn[int](varint.UnmarshalInt))
-		s = NewLinkedListSizer[int](mus.SizerFn[int](varint.SizeInt))
+		v   = ShortLinkedList()
+		ser = MakeLinkedListSer[int](varint.PositiveInt)
 	)
-	l := makeLinkedList()
 
 	// Marshal list.
-	bs := make([]byte, s.Size(l))
-	m.Marshal(l, bs)
+	bs := make([]byte, ser.Size(v))
+	ser.Marshal(v, bs)
 
 	// Unmarshal list.
-	al, _, err := u.Unmarshal(bs)
+	av, _, err := ser.Unmarshal(bs)
 	assert.EqualError(err, nil)
-	assert.EqualDeep(l, al)
+	assert.EqualDeep(v, av)
 }
 
-func makeLinkedList() (l LinkedList[int]) {
+func ShortLinkedList() (l LinkedList[int]) {
 	l = LinkedList[int]{}
 	l.AddBack(8)
 	l.AddBack(9)

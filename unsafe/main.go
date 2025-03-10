@@ -28,7 +28,7 @@ func main() {
 
 		// The same bs is used in each iteration, so all received strings are
 		// point to it.
-		str, _, _ := unsafe.UnmarshalString(nil, bs)
+		str, _, _ := unsafe.String.Unmarshal(bs)
 
 		// This is not a problem if each string is processed before the next read
 		// (which changes bs).
@@ -73,10 +73,10 @@ func main() {
 // “second” on the second. All results are marshalled with an unsafe package.
 func MakeReader() io.Reader {
 	return NewReaderMock().RegisterRead(func(p []byte) (n int, err error) {
-		n = unsafe.MarshalString("first", nil, p)
+		n = unsafe.String.Marshal("first", p)
 		return n, nil
 	}).RegisterRead(func(p []byte) (n int, err error) {
-		n = unsafe.MarshalString("second", nil, p)
+		n = unsafe.String.Marshal("second", p)
 		return n, nil
 	}).RegisterRead(func(p []byte) (n int, err error) {
 		return 0, io.EOF

@@ -8,204 +8,136 @@ import (
 	"github.com/mus-format/mus-go/varint"
 )
 
-// -----------------------------------------------------------------------------
-// Edge
-// -----------------------------------------------------------------------------
-
-// NewEdgeMarshaller creates a new Edge marshaller.
-//
-// vertexM param is a Vertex marshaller.
-func NewEdgeMarshaller[T any](
-	vertexM *mus.Marshaller[*Vertex[T]]) mus.Marshaller[Edge[T]] {
-	return mus.MarshallerFn[Edge[T]](
-		func(e Edge[T], bs []byte) (n int) {
-			n = varint.MarshalInt(e.Weight, bs)
-			return n + (*vertexM).Marshal(e.Vertex, bs[n:])
-		},
-	)
-}
-
-// NewEdgeUnmarshaller cretes a new Edge Unmarshaller.
-//
-// vertexU param is a Vertex Unmarshaller.
-func NewEdgeUnmarshaller[T any](
-	vertexU *mus.Unmarshaller[*Vertex[T]]) mus.Unmarshaller[Edge[T]] {
-	return mus.UnmarshallerFn[Edge[T]](
-		func(bs []byte) (e Edge[T], n int, err error) {
-			e.Weight, n, err = varint.UnmarshalInt(bs)
-			if err != nil {
-				return
-			}
-			var n1 int
-			e.Vertex, n1, err = (*vertexU).Unmarshal(bs[n:])
-			n += n1
-			return
-		},
-	)
-}
-
-// NewEdgeSizer creates a new Edge sizer.
-//
-// vertexS param is a Vertex sizer.
-func NewEdgeSizer[T any](vertexS *mus.Sizer[*Vertex[T]]) mus.Sizer[Edge[T]] {
-	return mus.SizerFn[Edge[T]](
-		func(e Edge[T]) (size int) {
-			size = varint.SizeInt(e.Weight)
-			return size + (*vertexS).Size(e.Vertex)
-		},
-	)
-}
-
-// -----------------------------------------------------------------------------
-// Vertex
-// -----------------------------------------------------------------------------
-
-// NewVertexMarshaller creates a new Vertex marshaller.
-//
-// valM param is a Vertex value marshaller, edgeM - Edge marshaller.
-func NewVertexMarshaller[T any](valM mus.Marshaller[T],
-	edgeM *mus.Marshaller[*Edge[T]]) mus.Marshaller[Vertex[T]] {
-	return mus.MarshallerFn[Vertex[T]](
-		func(v Vertex[T], bs []byte) (n int) {
-			n = valM.Marshal(v.Val, bs)
-			return n + ord.MarshalMap[int, *Edge[T]](v.Edges, nil,
-				mus.MarshallerFn[int](varint.MarshalInt),
-				*edgeM,
-				bs[n:])
-		},
-	)
-}
-
-// NewVertexUnmarshaller creates a new Vertex Unmarshaller.
-//
-// valU param is a Vertex value Unmarshaller, edgeU - Edge Unmarshaller.
-func NewVertexUnmarshaller[T any](valU mus.Unmarshaller[T],
-	edgeU *mus.Unmarshaller[*Edge[T]]) mus.Unmarshaller[Vertex[T]] {
-	return mus.UnmarshallerFn[Vertex[T]](
-		func(bs []byte) (t Vertex[T], n int, err error) {
-			t.Val, n, err = valU.Unmarshal(bs)
-			// t.Val, n, err = varint.UnmarshalInt(bs)
-			if err != nil {
-				return
-			}
-			var n1 int
-			t.Edges, n1, err = ord.UnmarshalMap[int, *Edge[T]](nil,
-				mus.UnmarshallerFn[int](varint.UnmarshalInt), *edgeU, bs[n:])
-			n += n1
-			return
-		},
-	)
-}
-
-// NewVertexSizer creates a new Vertex sizer.
-//
-// valS param is a Vertex value sizer, edgeS - Edge sizer.
-func NewVertexSizer[T any](valS mus.Sizer[T],
-	edgeS *mus.Sizer[*Edge[T]]) mus.Sizer[Vertex[T]] {
-	return mus.SizerFn[Vertex[T]](
-		func(v Vertex[T]) (size int) {
-			size = valS.Size(v.Val)
-			return size + ord.SizeMap[int, *Edge[T]](v.Edges, nil,
-				mus.SizerFn[int](varint.SizeInt), *edgeS)
-		},
-	)
-}
-
-// -----------------------------------------------------------------------------
-// Graph
-// -----------------------------------------------------------------------------
-
-// NewGraphMarshaller creates a new Graph marshaller.
-//
-// keyM param is a Vertex key marshaller, valM - Vertex value marshaller.
-func NewGraphMarshaller[T comparable, V any](keyM mus.Marshaller[T],
-	valM mus.Marshaller[V]) mus.Marshaller[Graph[T, V]] {
+// MakeGraphSer creates a new Graph serializer that can be directly used.
+func MakeGraphSer[T comparable, V any](keySer mus.Serializer[T],
+	valSer mus.Serializer[V],
+) mus.Serializer[Graph[T, V]] {
 	var (
-		mp                  = com.NewPtrMap()
-		vertexPtrMarshaller mus.Marshaller[*Vertex[V]]
-		edgePtrMarshaller   mus.Marshaller[*Edge[V]]
+		ptrMap    = com.NewPtrMap()
+		revPtrMap = com.NewReversePtrMap()
 	)
-	vertexPtrMarshaller = mus.MarshallerFn[*Vertex[V]](
-		func(v *Vertex[V], bs []byte) (n int) {
-			return pm.MarshalPtr[Vertex[V]](v, NewVertexMarshaller(valM,
-				&edgePtrMarshaller),
-				mp,
-				bs)
-		},
-	)
-	edgePtrMarshaller = mus.MarshallerFn[*Edge[V]](
-		func(e *Edge[V], bs []byte) (n int) {
-			return ord.MarshalPtr[Edge[V]](e, NewEdgeMarshaller(&vertexPtrMarshaller),
-				bs)
-		},
-	)
-	return mus.MarshallerFn[Graph[T, V]](
-		func(g Graph[T, V], bs []byte) (n int) {
-			return ord.MarshalMap[T, *Vertex[V]](g.Vertices, nil, keyM,
-				vertexPtrMarshaller,
-				bs)
-		},
-	)
+	return pm.Wrap[Graph[T, V]](ptrMap, revPtrMap, NewGraphSer[T, V](ptrMap,
+		revPtrMap, keySer, valSer))
 }
 
-// NewGraphUnmarshaller creates a new Graph Unmarshaller.
-//
-// keyU param is a Vertex key Unmarshaller, valU - Vertex value Unmarshaller.
-func NewGraphUnmarshaller[T comparable, V any](keyU mus.Unmarshaller[T],
-	valU mus.Unmarshaller[V]) mus.Unmarshaller[Graph[T, V]] {
+// NewGraphSer creates a new Graph serializer.
+func NewGraphSer[T comparable, V any](ptrMap *com.PtrMap,
+	revPtrMap *com.ReversePtrMap,
+	keySer mus.Serializer[T],
+	valSer mus.Serializer[V],
+) graphSer[T, V] {
 	var (
-		mp                    = com.NewReversePtrMap()
-		vertexPtrUnmarshaller mus.Unmarshaller[*Vertex[V]]
-		edgePtrUnmarshaller   mus.Unmarshaller[*Edge[V]]
+		edgesSer    mus.Serializer[map[T]*Edge[T, V]]
+		vertecesSer mus.Serializer[map[T]*Vertex[T, V]]
+
+		edgePtrSer   mus.Serializer[*Edge[T, V]]
+		vertexPtrSer mus.Serializer[*Vertex[T, V]]
+
+		edgeSer   = edgeSer[T, V]{&vertexPtrSer}
+		vertexSer = vertexSer[T, V]{valSer, &edgesSer}
 	)
-	vertexPtrUnmarshaller = mus.UnmarshallerFn[*Vertex[V]](
-		func(bs []byte) (v *Vertex[V], n int, err error) {
-			return pm.UnmarshalPtr[Vertex[V]](NewVertexUnmarshaller(valU,
-				&edgePtrUnmarshaller),
-				mp,
-				bs)
-		},
-	)
-	edgePtrUnmarshaller = mus.UnmarshallerFn[*Edge[V]](
-		func(bs []byte) (e *Edge[V], n int, err error) {
-			return ord.UnmarshalPtr[Edge[V]](
-				NewEdgeUnmarshaller(&vertexPtrUnmarshaller),
-				bs)
-		},
-	)
-	return mus.UnmarshallerFn[Graph[T, V]](
-		func(bs []byte) (g Graph[T, V], n int, err error) {
-			g.Vertices, n, err = ord.UnmarshalMap[T, *Vertex[V]](nil, keyU,
-				vertexPtrUnmarshaller,
-				bs)
-			return
-		},
-	)
+	edgePtrSer = pm.NewPtrSer[Edge[T, V]](ptrMap, revPtrMap, edgeSer)
+	vertexPtrSer = pm.NewPtrSer[Vertex[T, V]](ptrMap, revPtrMap, vertexSer)
+
+	edgesSer = ord.NewMapSer[T, *Edge[T, V]](keySer, edgePtrSer)
+	vertecesSer = ord.NewMapSer[T, *Vertex[T, V]](keySer, vertexPtrSer)
+
+	return graphSer[T, V]{vertecesSer}
 }
 
-// NewGraphSizer creates a new Graph sizer.
-//
-// keyU param is a Vertex key sizer, valU - Vertex value sizer.
-func NewGraphSizer[T comparable, V any](keyS mus.Sizer[T],
-	valS mus.Sizer[V]) mus.Sizer[Graph[T, V]] {
-	var (
-		mp             = com.NewPtrMap()
-		vertexPtrSizer mus.Sizer[*Vertex[V]]
-		edgePtrSizer   mus.Sizer[*Edge[V]]
-	)
-	vertexPtrSizer = mus.SizerFn[*Vertex[V]](
-		func(v *Vertex[V]) (size int) {
-			return pm.SizePtr[Vertex[V]](v, NewVertexSizer(valS, &edgePtrSizer), mp)
-		},
-	)
-	edgePtrSizer = mus.SizerFn[*Edge[V]](
-		func(e *Edge[V]) (size int) {
-			return ord.SizePtr[Edge[V]](e, NewEdgeSizer(&vertexPtrSizer))
-		},
-	)
-	return mus.SizerFn[Graph[T, V]](
-		func(g Graph[T, V]) (size int) {
-			return ord.SizeMap[T, *Vertex[V]](g.Vertices, nil, keyS, vertexPtrSizer)
-		},
-	)
+// edgeSer implements the mus.Serializer interface for Edge.
+type edgeSer[T comparable, V any] struct {
+	vertexPtrSer *mus.Serializer[*Vertex[T, V]]
+}
+
+func (s edgeSer[T, V]) Marshal(e Edge[T, V], bs []byte) (n int) {
+	n = varint.Int.Marshal(e.Weight, bs)
+	return n + (*s.vertexPtrSer).Marshal(e.Vertex, bs[n:])
+}
+
+func (s edgeSer[T, V]) Unmarshal(bs []byte) (e Edge[T, V], n int, err error) {
+	e.Weight, n, err = varint.Int.Unmarshal(bs)
+	if err != nil {
+		return
+	}
+	var n1 int
+	e.Vertex, n1, err = (*s.vertexPtrSer).Unmarshal(bs[n:])
+	n += n1
+	return
+}
+
+func (s edgeSer[T, V]) Size(e Edge[T, V]) (size int) {
+	size = varint.Int.Size(e.Weight)
+	return size + (*s.vertexPtrSer).Size(e.Vertex)
+}
+
+func (s edgeSer[T, V]) Skip(bs []byte) (n int, err error) {
+	n, err = varint.Int.Skip(bs)
+	if err != nil {
+		return
+	}
+	var n1 int
+	n1, err = (*s.vertexPtrSer).Skip(bs[n:])
+	n += n1
+	return
+}
+
+// vertexSer implements the mus.Serializer interface for Vertex.
+type vertexSer[T comparable, V any] struct {
+	valSer   mus.Serializer[V]
+	edgesSer *mus.Serializer[map[T]*Edge[T, V]]
+}
+
+func (s vertexSer[T, V]) Marshal(v Vertex[T, V], bs []byte) (n int) {
+	n = s.valSer.Marshal(v.Val, bs)
+	return n + (*s.edgesSer).Marshal(v.Edges, bs[n:])
+}
+
+func (s vertexSer[T, V]) Unmarshal(bs []byte) (v Vertex[T, V], n int, err error) {
+	v.Val, n, err = s.valSer.Unmarshal(bs)
+	if err != nil {
+		return
+	}
+	var n1 int
+	v.Edges, n1, err = (*s.edgesSer).Unmarshal(bs[n:])
+	n += n1
+	return
+}
+
+func (s vertexSer[T, V]) Size(v Vertex[T, V]) (size int) {
+	size = s.valSer.Size(v.Val)
+	return size + (*s.edgesSer).Size(v.Edges)
+}
+
+func (s vertexSer[T, V]) Skip(bs []byte) (n int, err error) {
+	n, err = s.valSer.Skip(bs)
+	if err != nil {
+		return
+	}
+	var n1 int
+	n1, err = (*s.edgesSer).Skip(bs[n:])
+	n += n1
+	return
+}
+
+// graphSer implements the mus.Serializer interface for Graph.
+type graphSer[T comparable, V any] struct {
+	vertecesSer mus.Serializer[map[T]*Vertex[T, V]]
+}
+
+func (s graphSer[T, V]) Marshal(g Graph[T, V], bs []byte) (n int) {
+	return s.vertecesSer.Marshal(g.Vertices, bs)
+}
+
+func (s graphSer[T, V]) Unmarshal(bs []byte) (g Graph[T, V], n int, err error) {
+	g.Vertices, n, err = s.vertecesSer.Unmarshal(bs)
+	return
+}
+
+func (s graphSer[T, V]) Size(g Graph[T, V]) (size int) {
+	return s.vertecesSer.Size(g.Vertices)
+}
+
+func (s graphSer[T, V]) Skip(bs []byte) (n int, err error) {
+	return s.vertecesSer.Skip(bs)
 }

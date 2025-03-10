@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/ymz-ncnk/assert"
+	assert "github.com/ymz-ncnk/assert/panic"
 )
 
-// Demonstrates data versioning. There are two versions of Foo: FooV1 and FooV2
-// (current).
+// This example, demonstrates data versioning. There are two versions of Foo:
+// FooV1 and FooV2 (current).
 func main() {
 	// Marshal old V1 version using DTS.
 	fooV1 := FooV1{num: 10}
@@ -14,7 +14,7 @@ func main() {
 	FooV1DTS.Marshal(fooV1, bs)
 
 	// Unmarshal the current version from the bs.
-	foo, _, err := UnmarshalFooMUS(bs) // UnmarshalFooMUS will migrate an
+	foo, _, err := FooMUS.Unmarshal(bs) // FooMUS.Unmarshal will migrate an
 	// old version to the current.
 	assert.EqualError(err, nil)
 	assert.Equal(foo, Foo{str: "10"})

@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/brianvoe/gofakeit"
-	"github.com/ymz-ncnk/assert"
+	assert "github.com/ymz-ncnk/assert/panic"
 	"google.golang.org/protobuf/proto"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -50,15 +50,15 @@ func MarshalProtobuf_UnmarshalMusGo(data *DataV1) {
 	bs, err := proto.Marshal(data)
 	assert.EqualError(err, nil)
 
-	adata, _, err := UnmarshalDataV1Protobuf(bs)
+	adata, _, err := DataV1Protobuf.Unmarshal(bs)
 	assert.EqualError(err, nil)
 
 	assert.Equal(data.String(), adata.String())
 }
 
 func MarshalMusGo_UnmarshalProtobuf(data *DataV1) {
-	bs := make([]byte, SizeDataV1Protobuf(data))
-	MarshalDataV1Protobuf(data, bs)
+	bs := make([]byte, DataV1Protobuf.Size(data))
+	DataV1Protobuf.Marshal(data, bs)
 
 	adata := DataV1{}
 	err := proto.Unmarshal(bs, &adata)
@@ -68,10 +68,10 @@ func MarshalMusGo_UnmarshalProtobuf(data *DataV1) {
 }
 
 func MarshalDataV1_UnmarshalDataV2(dataV1 *DataV1) {
-	bs := make([]byte, SizeDataV1Protobuf(dataV1))
-	MarshalDataV1Protobuf(dataV1, bs)
+	bs := make([]byte, DataV1Protobuf.Size(dataV1))
+	DataV1Protobuf.Marshal(dataV1, bs)
 
-	dataV2, _, err := UnmarshalDataV2Protobuf(bs)
+	dataV2, _, err := DataV2Protobuf.Unmarshal(bs)
 	assert.EqualError(err, nil)
 
 	if err := same(dataV1, dataV2); err != nil {
@@ -80,10 +80,10 @@ func MarshalDataV1_UnmarshalDataV2(dataV1 *DataV1) {
 }
 
 func MarshalDataV2_UnmarshalDataV1(dataV2 *DataV2) {
-	bs := make([]byte, SizeDataV2Protobuf(dataV2))
-	MarshalDataV2Protobuf(dataV2, bs)
+	bs := make([]byte, DataV2Protobuf.Size(dataV2))
+	DataV2Protobuf.Marshal(dataV2, bs)
 
-	dataV1, _, err := UnmarshalDataV1Protobuf(bs)
+	dataV1, _, err := DataV1Protobuf.Unmarshal(bs)
 	assert.EqualError(err, nil)
 
 	if err := same(dataV1, dataV2); err != nil {

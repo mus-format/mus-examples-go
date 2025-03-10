@@ -7,144 +7,123 @@ import (
 	"github.com/mus-format/mus-go/varint"
 )
 
-// -----------------------------------------------------------------------------
-// Elem
-// -----------------------------------------------------------------------------
-
-// NewElemMarshaller creates a new Elem marshaller.
-//
-// valM param is an Elem value marshaller, elemM - Elem marshaller.
-func NewElemMarshaller[T any](valM mus.Marshaller[T],
-	eleM *mus.Marshaller[*Elem[T]]) mus.Marshaller[Elem[T]] {
-	return mus.MarshallerFn[Elem[T]](
-		func(e Elem[T], bs []byte) (n int) {
-			n = valM.Marshal(e.Val, bs)
-			n += (*eleM).Marshal(e.prev, bs[n:])
-			return n + (*eleM).Marshal(e.next, bs[n:])
-		},
-	)
-}
-
-// NewElemUnmarshaller creates a new Elem Unmarshaller.
-//
-// valU param is an Elem value Unmarshaller, elemU - Elem Unmarshaller.
-func NewElemUnmarshaller[T any](valU mus.Unmarshaller[T],
-	elemU *mus.Unmarshaller[*Elem[T]]) mus.Unmarshaller[Elem[T]] {
-	return mus.UnmarshallerFn[Elem[T]](
-		func(bs []byte) (e Elem[T], n int, err error) {
-			e.Val, n, err = valU.Unmarshal(bs)
-			if err != nil {
-				return
-			}
-			var n1 int
-			e.prev, n1, err = (*elemU).Unmarshal(bs[n:])
-			n += n1
-			if err != nil {
-				return
-			}
-			e.next, n1, err = (*elemU).Unmarshal(bs[n:])
-			n += n1
-			return
-		},
-	)
-}
-
-// NewElemSizer creates a new Elem sizer.
-//
-// valS param is an Elem value sizer, elemS - Elem sizer.
-func NewElemSizer[T any](valS mus.Sizer[T],
-	elemS *mus.Sizer[*Elem[T]]) mus.Sizer[Elem[T]] {
-	return mus.SizerFn[Elem[T]](
-		func(e Elem[T]) (size int) {
-			size = valS.Size(e.Val)
-			size += (*elemS).Size(e.prev)
-			return size + (*elemS).Size(e.next)
-		},
-	)
-}
-
-// -----------------------------------------------------------------------------
-// LinkedList
-// -----------------------------------------------------------------------------
-
-// NewLinkedListMarshaller creates a new LinkedList marshaller.
-//
-// valM param is an Elem value marshaller.
-func NewLinkedListMarshaller[T any](
-	valM mus.Marshaller[T]) mus.Marshaller[LinkedList[T]] {
+// MakeLinkedListSer creates a new LinkedList serializer that can be directly used.
+func MakeLinkedListSer[T any](valSer mus.Serializer[T]) mus.Serializer[LinkedList[T]] {
 	var (
-		mp                = com.NewPtrMap()
-		elemPtrMarshaller mus.Marshaller[*Elem[T]]
+		ptrMap    = com.NewPtrMap()
+		revPtrMap = com.NewReversePtrMap()
+		ser       = NewLinkedListSer(ptrMap, revPtrMap, valSer)
 	)
-	elemPtrMarshaller = mus.MarshallerFn[*Elem[T]](
-		func(v *Elem[T], bs []byte) (n int) {
-			return pm.MarshalPtr[Elem[T]](v,
-				NewElemMarshaller(valM, &elemPtrMarshaller),
-				mp,
-				bs)
-		},
-	)
-	return mus.MarshallerFn[LinkedList[T]](
-		func(l LinkedList[T], bs []byte) (n int) {
-			n = elemPtrMarshaller.Marshal(l.head, bs)
-			n += elemPtrMarshaller.Marshal(l.tail, bs[n:])
-			return n + varint.MarshalInt(l.len, bs[n:])
-		},
-	)
+	return pm.Wrap[LinkedList[T]](ptrMap, revPtrMap, ser)
 }
 
-// NewLinkedListUnmarshaller cretaes a new LinkedList Unmarshaller.
-//
-// valU param is an Elem value Unmarshaller.
-func NewLinkedListUnmarshaller[T any](
-	valU mus.Unmarshaller[T]) mus.Unmarshaller[LinkedList[T]] {
+// NewLinkedListSer creates a new LinkedList serializer.
+func NewLinkedListSer[T any](ptrMap *com.PtrMap, revPtrMap *com.ReversePtrMap,
+	valSer mus.Serializer[T],
+) linkedListSer[T] {
 	var (
-		mp                  = com.NewReversePtrMap()
-		elemPtrUnmarshaller mus.Unmarshaller[*Elem[T]]
+		elPtrSer mus.Serializer[*Elem[T]]
+		elSer    = elemSer[T]{valSer, &elPtrSer}
 	)
-	elemPtrUnmarshaller = mus.UnmarshallerFn[*Elem[T]](
-		func(bs []byte) (e *Elem[T], n int, err error) {
-			return pm.UnmarshalPtr[Elem[T]](
-				NewElemUnmarshaller[T](valU, &elemPtrUnmarshaller), mp, bs)
-		},
-	)
-	return mus.UnmarshallerFn[LinkedList[T]](
-		func(bs []byte) (l LinkedList[T], n int, err error) {
-			l.head, n, err = elemPtrUnmarshaller.Unmarshal(bs)
-			if err != nil {
-				return
-			}
-			var n1 int
-			l.tail, n1, err = elemPtrUnmarshaller.Unmarshal(bs[n:])
-			n += n1
-			if err != nil {
-				return
-			}
-			l.len, n1, err = varint.UnmarshalInt(bs[n:])
-			n += n1
-			return
-		},
-	)
+	elPtrSer = pm.NewPtrSer[Elem[T]](ptrMap, revPtrMap, elSer)
+	return linkedListSer[T]{elPtrSer}
 }
 
-// NewLinkedListSizer creates a new LinkedList sizer.
-//
-// valS param is an Elem value sizer.
-func NewLinkedListSizer[T any](valS mus.Sizer[T]) mus.Sizer[LinkedList[T]] {
-	var (
-		mp           = com.NewPtrMap()
-		elemPtrSizer mus.Sizer[*Elem[T]]
-	)
-	elemPtrSizer = mus.SizerFn[*Elem[T]](
-		func(e *Elem[T]) (size int) {
-			return pm.SizePtr[Elem[T]](e, NewElemSizer[T](valS, &elemPtrSizer), mp)
-		},
-	)
-	return mus.SizerFn[LinkedList[T]](
-		func(l LinkedList[T]) (size int) {
-			size = elemPtrSizer.Size(l.head)
-			size += elemPtrSizer.Size(l.tail)
-			return size + varint.SizeInt(l.Len())
-		},
-	)
+// elemSer implements mus.Serializer for Elem.
+type elemSer[T any] struct {
+	valSer mus.Serializer[T]
+	elSer  *mus.Serializer[*Elem[T]]
+}
+
+func (s elemSer[T]) Marshal(e Elem[T], bs []byte) (n int) {
+	n = s.valSer.Marshal(e.Val, bs)
+	n += (*s.elSer).Marshal(e.prev, bs[n:])
+	return n + (*s.elSer).Marshal(e.next, bs[n:])
+}
+
+func (s elemSer[T]) Unmarshal(bs []byte) (e Elem[T], n int, err error) {
+	e.Val, n, err = s.valSer.Unmarshal(bs)
+	if err != nil {
+		return
+	}
+	var n1 int
+	e.prev, n1, err = (*s.elSer).Unmarshal(bs[n:])
+	n += n1
+	if err != nil {
+		return
+	}
+	e.next, n1, err = (*s.elSer).Unmarshal(bs[n:])
+	n += n1
+	return
+}
+
+func (s elemSer[T]) Size(e Elem[T]) (size int) {
+	size = s.valSer.Size(e.Val)
+	size += (*s.elSer).Size(e.prev)
+	return size + (*s.elSer).Size(e.next)
+}
+
+func (s elemSer[T]) Skip(bs []byte) (n int, err error) {
+	n, err = s.valSer.Skip(bs)
+	if err != nil {
+		return
+	}
+	var n1 int
+	n1, err = (*s.elSer).Skip(bs[n:])
+	n += n1
+	if err != nil {
+		return
+	}
+	n1, err = (*s.elSer).Skip(bs[n:])
+	n += n1
+	return
+}
+
+// linkedListSer implements mus.Serializer for LinkedList.
+type linkedListSer[T any] struct {
+	elPtrSer mus.Serializer[*Elem[T]]
+}
+
+func (s linkedListSer[T]) Marshal(l LinkedList[T], bs []byte) (n int) {
+	n = s.elPtrSer.Marshal(l.head, bs)
+	n += s.elPtrSer.Marshal(l.tail, bs[n:])
+	return n + varint.PositiveInt.Marshal(l.len, bs[n:])
+}
+
+func (s linkedListSer[T]) Unmarshal(bs []byte) (l LinkedList[T], n int, err error) {
+	l.head, n, err = s.elPtrSer.Unmarshal(bs)
+	if err != nil {
+		return
+	}
+	var n1 int
+	l.tail, n1, err = s.elPtrSer.Unmarshal(bs[n:])
+	n += n1
+	if err != nil {
+		return
+	}
+	l.len, n1, err = varint.PositiveInt.Unmarshal(bs[n:])
+	n += n1
+	return
+}
+
+func (s linkedListSer[T]) Size(l LinkedList[T]) (size int) {
+	size = s.elPtrSer.Size(l.head)
+	size += s.elPtrSer.Size(l.tail)
+	return size + varint.PositiveInt.Size(l.len)
+}
+
+func (s linkedListSer[T]) Skip(bs []byte) (n int, err error) {
+	n, err = s.elPtrSer.Skip(bs)
+	if err != nil {
+		return
+	}
+	var n1 int
+	n1, err = s.elPtrSer.Skip(bs[n:])
+	n += n1
+	if err != nil {
+		return
+	}
+	n1, err = varint.PositiveInt.Skip(bs[n:])
+	n += n1
+	return
 }

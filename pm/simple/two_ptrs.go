@@ -1,6 +1,6 @@
 package main
 
-type TwoPtr struct {
+type TwoPtrs struct {
 	ptr1 *string
 	ptr2 *string
 }

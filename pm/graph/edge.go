@@ -1,6 +1,6 @@
 package main
 
-type Edge[T any] struct {
+type Edge[T comparable, V any] struct {
 	Weight int
-	Vertex *Vertex[T]
+	Vertex *Vertex[T, V]
 }

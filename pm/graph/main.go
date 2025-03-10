@@ -1,49 +1,41 @@
 package main
 
 import (
-	"github.com/mus-format/mus-go"
+	"github.com/mus-format/mus-go/ord"
 	"github.com/mus-format/mus-go/varint"
-	"github.com/ymz-ncnk/assert"
+	assert "github.com/ymz-ncnk/assert/panic"
 )
 
 func init() {
 	assert.On = true
 }
 
-// Demonstrates how to use the pm package to serialize a cyclic graph.
+// This example demonstrates how to use the pm package to serialize a cyclic
+// graph.
 func main() {
 	var (
-		m = NewGraphMarshaller[int, int](mus.MarshallerFn[int](varint.MarshalInt),
-			mus.MarshallerFn[int](varint.MarshalInt))
-		u = NewGraphUnmarshaller[int, int](mus.UnmarshallerFn[int](varint.UnmarshalInt),
-			mus.UnmarshallerFn[int](varint.UnmarshalInt))
-		s = NewGraphSizer[int, int](mus.SizerFn[int](varint.SizeInt),
-			mus.SizerFn[int](varint.SizeInt))
+		v   = CyclicGraph()
+		ser = MakeGraphSer[int, string](varint.Int, ord.String)
 	)
-	g := makeCyclicGraph()
 
 	// Marshal graph.
-	bs := make([]byte, s.Size(g))
-	m.Marshal(g, bs)
+	bs := make([]byte, ser.Size(v))
+	ser.Marshal(v, bs)
 
 	// Unmarshal graph.
-	ag, _, err := u.Unmarshal(bs)
+	av, _, err := ser.Unmarshal(bs)
 	assert.EqualError(err, nil)
-	assert.EqualDeep(g, ag)
+	assert.EqualDeep(v, av)
 }
 
-func makeCyclicGraph() Graph[int, int] {
-	var (
-		e1, e2, e3 Edge[int]
-		v1, v2, v3 Vertex[int]
-	)
-	e1 = Edge[int]{Weight: 20, Vertex: &v1}
-	e2 = Edge[int]{Weight: 10, Vertex: &v2}
-	e3 = Edge[int]{Weight: 30, Vertex: &v2}
-	v1 = Vertex[int]{Val: 8, Edges: map[int]*Edge[int]{2: &e2}}
-	v2 = Vertex[int]{Val: 9, Edges: map[int]*Edge[int]{1: &e1}}
-	v3 = Vertex[int]{Val: 10, Edges: map[int]*Edge[int]{2: &e3}}
-	return Graph[int, int]{
-		Vertices: map[int]*Vertex[int]{1: &v1, 2: &v2, 3: &v3},
-	}
+func CyclicGraph() (g Graph[int, string]) {
+	g = NewGraph[int, string]()
+	g.AddVertex(1, "one")
+	g.AddVertex(2, "two")
+	g.AddVertex(3, "three")
+
+	g.AddEdge(1, 2, 10)
+	g.AddEdge(2, 3, 20)
+	g.AddEdge(3, 1, 30)
+	return
 }

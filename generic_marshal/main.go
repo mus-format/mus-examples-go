@@ -2,14 +2,7 @@ package main
 
 import "fmt"
 
-// Generic marshal function.
-func MarshalMUS(v MarshallerMUS) (bs []byte) {
-	bs = make([]byte, v.SizeMUS())
-	v.MarshalMUS(bs)
-	return
-}
-
-// Demonstrates how to implement the generic marshal function.
+// This example demonstrates how to implement the generic marshal function.
 func main() {
 	// Both Foo and Bar types implement MarshallerMUS interface.
 
@@ -18,4 +11,11 @@ func main() {
 
 	bs = MarshalMUS(Bar{str: "10"}) // ... and with Bar.
 	fmt.Println(bs)
+}
+
+// Generic marshal function.
+func MarshalMUS(v MarshallerMUS) (bs []byte) {
+	bs = make([]byte, v.SizeMUS())
+	v.MarshalMUS(bs)
+	return
 }

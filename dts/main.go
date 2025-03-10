@@ -12,13 +12,12 @@ import (
 func main() {
 	// Make a random data and Unmarshal DTM.
 	bs := randomData()
-	dtm, n, err := dts.UnmarshalDTM(bs)
+	dtm, n, err := dts.DTMSer.Unmarshal(bs)
 	if err != nil {
 		panic(err)
 	}
 
-	// Deserialize and process data depending on the DTM, which in general allows
-	// to receive data of different types.
+	// Deserialize and process data depending on the DTM.
 	switch dtm {
 	case FooDTM:
 		foo, _, err := FooDTS.UnmarshalData(bs[n:])
@@ -40,15 +39,15 @@ func main() {
 }
 
 func randomData() (bs []byte) {
-	// Generate random DTM
+	// Generate a random DTM.
 	dtm := com.DTM(rand.Intn(2) + 1)
 	switch dtm {
-	// Marshal Foo
+	// Marshal Foo.
 	case FooDTM:
 		foo := Foo{num: 5}
 		bs = make([]byte, FooDTS.Size(foo))
 		FooDTS.Marshal(foo, bs)
-	// Marshal Bar
+	// Marshal Bar.
 	case BarDTM:
 		bar := Bar{str: "hello world"}
 		bs = make([]byte, BarDTS.Size(bar))
