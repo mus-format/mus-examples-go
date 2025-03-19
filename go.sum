@@ -2,6 +2,12 @@ github.com/brianvoe/gofakeit v3.18.0+incompatible h1:wDOmHc9DLG4nRjUVVaxA+CEglKO
 github.com/brianvoe/gofakeit v3.18.0+incompatible/go.mod h1:kfwdRA90vvNhPutZWfH7WPaDzUjz+CZFqG+rPkOjGOc=
 github.com/google/go-cmp v0.5.8 h1:e6P7q2lk1O+qJJb4BtCQXlK8vWEO8V1ZeuEdJNOqZyg=
 github.com/google/go-cmp v0.5.8/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
+github.com/mus-format/common-go v0.0.0-20250307125743-867bbd6eb59c h1:axAH0WwqkZNIWZIyswO59y63JaymSi9kqy3yybhQTdI=
+github.com/mus-format/common-go v0.0.0-20250307125743-867bbd6eb59c/go.mod h1:1hTb8w0YdSGIOU6wNY+e9uXnDZ9OQnUivNtd8cPSdoU=
+github.com/mus-format/mus-dts-go v0.7.2 h1:BGjeXlerL7QDhHxQ8HvUYdt0IVjE1lA9C9laQeZGZUw=
+github.com/mus-format/mus-dts-go v0.7.2/go.mod h1:FJpIgRlgq160l/dz899cirgM6Uk99baNKz/K7r1WA3w=
+github.com/mus-format/mus-go v0.6.2 h1:stS2qPQMC2oBwZYGiZD6RdD5jZW2w8rnbauWY4g0ZtQ=
+github.com/mus-format/mus-go v0.6.2/go.mod h1:SY5kTmvykop/jax/VtGf6vyjaunHkg5cAeiFgC1XJmY=
 github.com/ymz-ncnk/assert v0.0.0-20250123135256-e8b646342be2 h1:NLwsA4VKglgqVsCr837PvmD0DurLgyUdWSN1AsJEDG4=
 github.com/ymz-ncnk/assert v0.0.0-20250123135256-e8b646342be2/go.mod h1:+lSOTrCyOPuvc0xuvK4uKhgQ0Ar3U/HJPpJZg73kvgE=
 github.com/ymz-ncnk/mok v0.2.0 h1:4xOvkG0EXDlr05ZTSeRzM2q5mbyNbALRqRoI+cTwUyc=

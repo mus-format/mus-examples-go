@@ -5,6 +5,7 @@ import (
 
 	com "github.com/mus-format/common-go"
 	"github.com/mus-format/mus-go"
+	strops "github.com/mus-format/mus-go/options/string"
 	"github.com/mus-format/mus-go/ord"
 	"github.com/mus-format/mus-go/unsafe"
 	"github.com/mus-format/mus-go/varint"
@@ -36,7 +37,7 @@ var (
 	DataV2Protobuf = dataV2Protobuf{}
 
 	LenSer       = lenSer{}
-	StringSer    = ord.NewStringSerWith(LenSer)
+	StringSer    = ord.NewStringSer(strops.WithLenSer(LenSer))
 	SliceSer     = sliceSer[int32]{varint.Int32}
 	TimestampSer = timestampSer{}
 )
