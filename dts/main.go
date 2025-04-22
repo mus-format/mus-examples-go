@@ -5,7 +5,7 @@ import (
 	"math/rand"
 
 	com "github.com/mus-format/common-go"
-	dts "github.com/mus-format/mus-dts-go"
+	dts "github.com/mus-format/dts-go"
 )
 
 // This example shows how mus-dts-go can be used.

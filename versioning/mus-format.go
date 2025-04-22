@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	com "github.com/mus-format/common-go"
-	dts "github.com/mus-format/mus-dts-go"
+	dts "github.com/mus-format/dts-go"
 	"github.com/mus-format/mus-go/ord"
 	"github.com/mus-format/mus-go/varint"
 )
