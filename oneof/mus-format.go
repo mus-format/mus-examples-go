@@ -3,6 +3,7 @@ package main
 import (
 	com "github.com/mus-format/common-go"
 	dts "github.com/mus-format/dts-go"
+	"github.com/mus-format/ext-mus-go"
 	"github.com/mus-format/mus-go/ord"
 	"github.com/mus-format/mus-go/varint"
 )
@@ -30,8 +31,8 @@ var (
 type instructionSer struct{}
 
 func (s instructionSer) Marshal(in Instruction, bs []byte) (n int) {
-	if m, ok := in.(MarshallerMUS); ok {
-		return m.MarshalMUS(bs)
+	if m, ok := in.(ext.MarshallerTypedMUS); ok {
+		return m.MarshalTypedMUS(bs)
 	}
 	panic("in doesn't implement MarshallerMUS interface")
 }
@@ -58,8 +59,8 @@ func (s instructionSer) Unmarshal(bs []byte) (in Instruction, n int, err error) 
 }
 
 func (s instructionSer) Size(in Instruction) (size int) {
-	if s, ok := in.(MarshallerMUS); ok {
-		return s.SizeMUS()
+	if s, ok := in.(ext.MarshallerTypedMUS); ok {
+		return s.SizeTypedMUS()
 	}
 	panic("in doesn't implement MarshallerMUS interface")
 }

@@ -19,11 +19,11 @@ func (c Copy) Do() {
 	fmt.Printf("copy from %v to %v\n", c.start, c.end)
 }
 
-func (c Copy) MarshalMUS(bs []byte) (n int) {
+func (c Copy) MarshalTypedMUS(bs []byte) (n int) {
 	return CopyDTS.Marshal(c, bs)
 }
 
-func (c Copy) SizeMUS() int {
+func (c Copy) SizeTypedMUS() int {
 	return CopyDTS.Size(c)
 }
 
@@ -36,10 +36,10 @@ func (i Insert) Do() {
 	fmt.Printf("insert '%v'\n", i.str)
 }
 
-func (i Insert) MarshalMUS(bs []byte) (n int) {
+func (i Insert) MarshalTypedMUS(bs []byte) (n int) {
 	return InsertDTS.Marshal(i, bs)
 }
 
-func (i Insert) SizeMUS() int {
+func (i Insert) SizeTypedMUS() int {
 	return InsertDTS.Size(i)
 }

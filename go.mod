@@ -1,11 +1,12 @@
 module github.com/ymz-ncnk/mus-examples-go
 
-go 1.23
+go 1.23.0
 
 require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
 	github.com/mus-format/common-go v0.0.0-20250307125743-867bbd6eb59c
 	github.com/mus-format/dts-go v0.9.0
+	github.com/mus-format/ext-mus-go v0.0.0-20250409231309-5545cbb51bbb
 	github.com/mus-format/mus-go v0.7.0
 	github.com/ymz-ncnk/assert v0.0.0-20250123135256-e8b646342be2
 	github.com/ymz-ncnk/mok v0.2.0

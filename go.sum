@@ -6,6 +6,8 @@ github.com/mus-format/common-go v0.0.0-20250307125743-867bbd6eb59c h1:axAH0WwqkZ
 github.com/mus-format/common-go v0.0.0-20250307125743-867bbd6eb59c/go.mod h1:1hTb8w0YdSGIOU6wNY+e9uXnDZ9OQnUivNtd8cPSdoU=
 github.com/mus-format/dts-go v0.9.0 h1:r+3OD8xMCVE42rtJxxPoPmhxDU4vAlQSp9In+7udt0U=
 github.com/mus-format/dts-go v0.9.0/go.mod h1:tBV5wdWpi+WUHChtNp3y6nH/dyM/1P1l74hDx+llAoA=
+github.com/mus-format/ext-mus-go v0.0.0-20250409231309-5545cbb51bbb h1:g04mfiDJHVkwBYb4oT0AeicLT07OvFHFAPm0q4Fw+oA=
+github.com/mus-format/ext-mus-go v0.0.0-20250409231309-5545cbb51bbb/go.mod h1:m02oWQUOMOu2Veuqscnq5h0buigG6HuDTRPaQgZUzpo=
 github.com/mus-format/mus-go v0.7.0 h1:w2b9Awc4xVCQGhJFGCAb3UV75X+Byyfam9w8sAZirJM=
 github.com/mus-format/mus-go v0.7.0/go.mod h1:SY5kTmvykop/jax/VtGf6vyjaunHkg5cAeiFgC1XJmY=
 github.com/ymz-ncnk/assert v0.0.0-20250123135256-e8b646342be2 h1:NLwsA4VKglgqVsCr837PvmD0DurLgyUdWSN1AsJEDG4=
