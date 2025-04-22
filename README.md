@@ -6,6 +6,7 @@ serializer (each package is one example):
 - dts - demonstrates how [mus-dts-go](https://github.com/mus-format/mus-dts-go) 
   can be used.
 - versioning - demonstrates data versioning.
+- marshal_func - demonstrates how to use `MarshalMUS` function.
 - generic_marshal - demonstrates how to implement generic marshal function.
 - oneof - shows how to serialize an interface.
 - pm - demonstrates how to use the `pm` package to serialize a graph or linked 
