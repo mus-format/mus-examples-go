@@ -8,6 +8,8 @@ github.com/mus-format/dts-go v0.9.0 h1:r+3OD8xMCVE42rtJxxPoPmhxDU4vAlQSp9In+7udt
 github.com/mus-format/dts-go v0.9.0/go.mod h1:tBV5wdWpi+WUHChtNp3y6nH/dyM/1P1l74hDx+llAoA=
 github.com/mus-format/ext-mus-go v0.0.0-20250409231309-5545cbb51bbb h1:g04mfiDJHVkwBYb4oT0AeicLT07OvFHFAPm0q4Fw+oA=
 github.com/mus-format/ext-mus-go v0.0.0-20250409231309-5545cbb51bbb/go.mod h1:m02oWQUOMOu2Veuqscnq5h0buigG6HuDTRPaQgZUzpo=
+github.com/mus-format/ext-protobuf-go v0.0.0-20250409220359-86101cc04d7b h1:bMAfrPPx4hbawkyYYRuY4XfSXaMeKJNr2t5a+UknQuk=
+github.com/mus-format/ext-protobuf-go v0.0.0-20250409220359-86101cc04d7b/go.mod h1:Jag55W5MStYDAOOLfcIR7VjTEHmse8fibgMM8Pr/YXE=
 github.com/mus-format/mus-go v0.7.0 h1:w2b9Awc4xVCQGhJFGCAb3UV75X+Byyfam9w8sAZirJM=
 github.com/mus-format/mus-go v0.7.0/go.mod h1:SY5kTmvykop/jax/VtGf6vyjaunHkg5cAeiFgC1XJmY=
 github.com/ymz-ncnk/assert v0.0.0-20250123135256-e8b646342be2 h1:NLwsA4VKglgqVsCr837PvmD0DurLgyUdWSN1AsJEDG4=
@@ -16,5 +18,5 @@ github.com/ymz-ncnk/mok v0.2.0 h1:4xOvkG0EXDlr05ZTSeRzM2q5mbyNbALRqRoI+cTwUyc=
 github.com/ymz-ncnk/mok v0.2.0/go.mod h1:VDVVGULp0vdJeD27SgJghOFGyD7w3nX7SDh8TOlvIsY=
 golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53 h1:5llv2sWeaMSnA3w2kS57ouQQ4pudlXrR0dCgw51QK9o=
 golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53/go.mod h1:V1LtkGg67GoY2N1AnLN78QLrzxkLyJw7RJb1gzOOz9w=
-google.golang.org/protobuf v1.36.5 h1:tPhr+woSbjfYvY6/GPufUoYizxw1cF/yFoxJ2fmpwlM=
-google.golang.org/protobuf v1.36.5/go.mod h1:9fA7Ob0pmnwhb644+1+CVWFRbNajQ6iRojtC/QF5bRE=
+google.golang.org/protobuf v1.36.6 h1:z1NpPI8ku2WgiWnf+t9wTPsn6eP1L7ksHUlkfLvd9xY=
+google.golang.org/protobuf v1.36.6/go.mod h1:jduwjTPXsFjZGTmRluh+L6NjiWu7pchiJ2/5YcXBHnY=
