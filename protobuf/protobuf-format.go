@@ -80,10 +80,10 @@ func (s dataV1Protobuf) Marshal(data *DataV1, bs []byte) (n int) {
 	return
 }
 
-// UnmarshalDataV1Protobuf unmarshals fields in а loop:
-// 1. Unmarshals the tag.
-// 2. Unmarshals the length of the value, if the field is a struct or slice.
-// 3. Unmarshals the value.
+// Unmarshal unmarshals in a loop:
+// 1. Field tag.
+// 2. Length of the value, if the field is a struct or slice.
+// 3. Value.
 func (s dataV1Protobuf) Unmarshal(bs []byte) (data *DataV1, n int, err error) {
 	var (
 		n1  int
