@@ -14,7 +14,7 @@ func init() {
 func main() {
 	var (
 		v   = ShortLinkedList()
-		ser = MakeLinkedListSer[int](varint.PositiveInt)
+		ser = MakeLinkedListMUS[int](varint.PositiveInt)
 	)
 
 	// Marshal list.

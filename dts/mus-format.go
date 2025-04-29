@@ -15,52 +15,52 @@ const (
 
 // Serializers.
 var (
-	FooSer = fooSer{}
-	BarSer = barSer{}
+	FooMUS = fooMUS{}
+	BarMUS = barMUS{}
 )
 
 // DTS (Data Type metadata Support) definitions.
 var (
-	FooDTS = dts.New[Foo](FooDTM, FooSer)
-	BarDTS = dts.New[Bar](BarDTM, BarSer)
+	FooDTS = dts.New[Foo](FooDTM, FooMUS)
+	BarDTS = dts.New[Bar](BarDTM, BarMUS)
 )
 
-// fooSer implements mus.Serializer for Foo.
-type fooSer struct{}
+// fooMUS implements mus.Serializer for Foo.
+type fooMUS struct{}
 
-func (s fooSer) Marshal(foo Foo, bs []byte) (n int) {
+func (s fooMUS) Marshal(foo Foo, bs []byte) (n int) {
 	return varint.Int.Marshal(foo.num, bs)
 }
 
-func (s fooSer) Unmarshal(bs []byte) (foo Foo, n int, err error) {
+func (s fooMUS) Unmarshal(bs []byte) (foo Foo, n int, err error) {
 	foo.num, n, err = varint.Int.Unmarshal(bs[n:])
 	return
 }
 
-func (s fooSer) Size(foo Foo) (size int) {
+func (s fooMUS) Size(foo Foo) (size int) {
 	return varint.Int.Size(foo.num)
 }
 
-func (s fooSer) Skip(bs []byte) (n int, err error) {
+func (s fooMUS) Skip(bs []byte) (n int, err error) {
 	return varint.Int.Skip(bs)
 }
 
-// barSer implements mus.Serializer for Bar.
-type barSer struct{}
+// barMUS implements mus.Serializer for Bar.
+type barMUS struct{}
 
-func (s barSer) Marshal(bar Bar, bs []byte) (n int) {
+func (s barMUS) Marshal(bar Bar, bs []byte) (n int) {
 	return ord.String.Marshal(bar.str, bs)
 }
 
-func (s barSer) Unmarshal(bs []byte) (bar Bar, n int, err error) {
+func (s barMUS) Unmarshal(bs []byte) (bar Bar, n int, err error) {
 	bar.str, n, err = ord.String.Unmarshal(bs[n:])
 	return
 }
 
-func (s barSer) Size(bar Bar) (size int) {
+func (s barMUS) Size(bar Bar) (size int) {
 	return ord.String.Size(bar.str)
 }
 
-func (s barSer) Skip(bs []byte) (n int, err error) {
+func (s barMUS) Skip(bs []byte) (n int, err error) {
 	return ord.SkipString(nil, bs)
 }
