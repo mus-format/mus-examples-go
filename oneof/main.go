@@ -19,21 +19,21 @@ func main() {
 
 	// Marshal Copy instruction.
 	copy := Copy{start: 10, end: 20}
-	bs = make([]byte, InstructionSer.Size(copy))
-	InstructionSer.Marshal(copy, bs)
+	bs = make([]byte, InstructionMUS.Size(copy))
+	InstructionMUS.Marshal(copy, bs)
 
 	// Unmarshal Copy instruction.
-	in, _, err = InstructionSer.Unmarshal(bs)
+	in, _, err = InstructionMUS.Unmarshal(bs)
 	assert.EqualError(err, nil)
 	assert.EqualDeep(in, copy)
 
 	// Marshal Insert instruction.
 	insert := Insert{str: "hello world"}
-	bs = make([]byte, InstructionSer.Size(insert))
-	InstructionSer.Marshal(insert, bs)
+	bs = make([]byte, InstructionMUS.Size(insert))
+	InstructionMUS.Marshal(insert, bs)
 
 	// Unmarshal Insert instruction.
-	in, _, err = InstructionSer.Unmarshal(bs)
+	in, _, err = InstructionMUS.Unmarshal(bs)
 	assert.EqualError(err, nil)
 	assert.EqualDeep(in, insert)
 }
