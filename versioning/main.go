@@ -4,8 +4,6 @@ import (
 	assert "github.com/ymz-ncnk/assert/panic"
 )
 
-// This example, demonstrates data versioning. There are two versions of Foo:
-// FooV1 and FooV2 (current).
 func main() {
 	// Marshal old V1 version using DTS.
 	fooV1 := FooV1{num: 10}

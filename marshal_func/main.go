@@ -6,7 +6,6 @@ import (
 	ext "github.com/mus-format/ext-mus-go"
 )
 
-// This example demonstrates how to implement the generic marshal function.
 func main() {
 	// Both Foo and Bar types implement ext.MarshallerMUS interface.
 

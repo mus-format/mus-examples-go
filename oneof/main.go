@@ -8,8 +8,6 @@ func init() {
 	assert.On = true
 }
 
-// This example demonstrates how to implement the "oneof" feature. It includes
-// an Instruction interface with its Copy and Insert implementations.
 func main() {
 	var (
 		bs  []byte

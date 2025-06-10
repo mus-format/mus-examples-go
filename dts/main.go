@@ -8,7 +8,6 @@ import (
 	dts "github.com/mus-format/dts-go"
 )
 
-// This example shows how mus-dts-go can be used.
 func main() {
 	// Make a random data and Unmarshal DTM.
 	bs := randomData()

@@ -7,7 +7,6 @@ import (
 	"github.com/mus-format/mus-go/unsafe"
 )
 
-// In this example, several strings are unmarshalled with the unsafe package.
 func main() {
 	var (
 		bs   = make([]byte, 10) // Long enough bs to store all read data.

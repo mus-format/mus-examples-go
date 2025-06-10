@@ -15,7 +15,7 @@ func init() {
 func main() {
 	var (
 		v   = CyclicGraph()
-		ser = MakeGraphMUS[int, string](varint.Int, ord.String)
+		ser = MakeGraphMUS(varint.Int, ord.String)
 	)
 
 	// Marshal graph.

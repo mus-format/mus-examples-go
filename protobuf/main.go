@@ -13,9 +13,6 @@ func init() {
 	assert.On = true
 }
 
-// In this example, Protobuf encoding is implemented using mus-go. There are two
-// structures DataV1, DataV2. The last one is the same as DataV1, but with two
-// deleted fields: Bool and Slice.
 func main() {
 	var (
 		dataV1 = DataV1{
