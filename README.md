@@ -10,4 +10,4 @@ serializer (each package is one example):
 - [oneof](oneof): shows how to serialize an interface.
 - [pm](pm): demonstrates how to use the `pm` package to serialize a graph or 
   linked list.
-- [out_or_order](out_or_order): shows how to deserialize values out of order.
+- [out_of_order](out_of_order): shows how to deserialize values out of order.
